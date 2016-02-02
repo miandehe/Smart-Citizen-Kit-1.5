@@ -55,45 +55,49 @@ char* SCKDriver::sckDate(const char* date, const char* time){
       }
     buffer[j] = '-';
     j++;
-    buffer[j] = '0';
     // Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec 
     switch (date[0]) {
         case 'J': 
-            if (date[1] == 'a') buffer[j+1] = '1';
-            else if (date[2] == 'n') buffer[j+1] = '6';
-            else buffer[j+1] = '7';
+            if (date[1] == 'a') buffer[j] = '1';
+            else if (date[2] == 'n') buffer[j] = '6';
+            else buffer[j] = '7';
             break; 
         case 'F': 
-            buffer[j+1] = '2'; 
+            buffer[j] = '2'; 
             break;
         case 'A': 
-            if (date[1] == 'p') buffer[j+1] = '4';
-            else buffer[j+1] = '8';
+            if (date[1] == 'p') buffer[j] = '4';
+            else buffer[j] = '8';
             break;
         case 'M': 
-            if (date[2] == 'r') buffer[j+1] = '3';
-            else buffer[j+1] = '5';
+            if (date[2] == 'r') buffer[j] = '3';
+            else buffer[j] = '5';
             break;
         case 'S': 
-            buffer[j+1] = '9'; 
+            buffer[j] = '9'; 
             break;
         case 'O': 
             buffer[j] = '1'; 
             buffer[j+1] = '0';
+            j++;
             break;
         case 'N': 
             buffer[j] = '1'; 
             buffer[j+1] = '1';
+            j++;
             break;
         case 'D': 
             buffer[j] = '1'; 
             buffer[j+1] = '2';
+            j++;
             break;
     }
-  j=j+2;
+  j++;
   buffer[j] = '-';
   j++;
-  for  (int i = 5; date[i]!=' '; i++)
+  byte k = 4;
+  if (date[4] == ' ')  k = 5;
+  for  (int i = k; date[i]!=' '; i++)
       {
         buffer[j] = date[i];
         j++;
@@ -137,80 +141,46 @@ boolean SCKDriver::RTCadjust(char *time) {
     Wire.write(rtc[1]); //0x05 MONTH
     Wire.write(rtc[0]); //0x06 YEAR
     Wire.endTransmission();
-    delay(4);    
+    //delay(4);    
     return true;
   }
   return false;  
 }
 
+char timeRTC[20] = {'2', '0', '0', '0', '-', '0', '0', '-', '0', '0', ' ', '0', '0', ':', '0', '0', ':', '0', '0', 0x00};
+
 boolean SCKDriver::RTCtime(char *time) {
+  uint8_t date[6] = {0xFF, 0x1F, 0xFF, 0xFF, 0xFF, 0x7F};
+  for (int i=0; i<20; i++) time[i] = timeRTC[i];
   Wire.beginTransmission(RTC_ADDRESS);
   Wire.write((int)0);  
   Wire.endTransmission();
   Wire.requestFrom(RTC_ADDRESS, 7);
-  uint8_t seconds = (Wire.read() & 0x7F);
-  uint8_t minutes = Wire.read();
-  uint8_t hours = Wire.read();
+  for (int i=5; i>2; i--) date[i] = (Wire.read() & date[i]);
   Wire.read();
-  uint8_t day = Wire.read();
-  uint8_t month = Wire.read();
-  uint8_t year = Wire.read();
-  time[0] = '2';
-  time[1] = '0';
-  time[2] = (year>>4) + '0';
-  time[3] = (year&0x0F) + '0';
-  time[4] = '-';
-  time[5] = (month>>4) + '0';
-  time[6] = (month&0x0F) + '0';
-  time[7] = '-';
-  time[8] = (day>>4) + '0';
-  time[9] = (day&0x0F) + '0';
-  time[10] = ' ';
-  time[11] = (hours>>4) + '0';
-  time[12] = (hours&0x0F) + '0';
-  time[13] = ':';
-  time[14] = (minutes>>4) + '0';
-  time[15] = (minutes&0x0F) + '0';
-  time[16] = ':';
-  time[17] = (seconds>>4) + '0';
-  time[18] = (seconds&0x0F) + '0';
-  time[19] = 0x00;
+  for (int i=2; i>=0; i--) date[i] = (Wire.read() & date[i]);
+  for (int i=0; i<6; i++) 
+    {
+       time[2+3*i] =  (date[i]>>4) + '0';
+       time[3+3*i] =  (date[i]&0x0F) + '0';
+    }
   return true;
 }
 
-char timeRTC[20];
 char* SCKDriver::RTCtime() {
+  uint8_t date[6] = {0xFF, 0x1F, 0xFF, 0xFF, 0xFF, 0x7F};
   Wire.beginTransmission(RTC_ADDRESS);
   Wire.write((int)0);  
   Wire.endTransmission();
   Wire.requestFrom(RTC_ADDRESS, 7);
-  uint8_t seconds = (Wire.read() & 0x7F);
-  uint8_t minutes = Wire.read();
-  uint8_t hours = Wire.read();
+  for (int i=5; i>2; i--) date[i] = (Wire.read() & date[i]);
   Wire.read();
-  uint8_t day = Wire.read();
-  uint8_t month = Wire.read();
-  uint8_t year = Wire.read();
-  timeRTC[0] = '2';
-  timeRTC[1] = '0';
-  timeRTC[2] = (year>>4) + '0';
-  timeRTC[3] = (year&0x0F) + '0';
-  timeRTC[4] = '-';
-  timeRTC[5] = (month>>4) + '0';
-  timeRTC[6] = (month&0x0F) + '0';
-  timeRTC[7] = '-';
-  timeRTC[8] = (day>>4) + '0';
-  timeRTC[9] = (day&0x0F) + '0';
-  timeRTC[10] = ' ';
-  timeRTC[11] = (hours>>4) + '0';
-  timeRTC[12] = (hours&0x0F) + '0';
-  timeRTC[13] = ':';
-  timeRTC[14] = (minutes>>4) + '0';
-  timeRTC[15] = (minutes&0x0F) + '0';
-  timeRTC[16] = ':';
-  timeRTC[17] = (seconds>>4) + '0';
-  timeRTC[18] = (seconds&0x0F) + '0';
-  timeRTC[19] = 0x00;
+  for (int i=2; i>=0; i--) date[i] = (Wire.read() & date[i]);
+  for (int i=0; i<6; i++) 
+    {
+       timeRTC[2+3*i] =  (date[i]>>4) + '0';
+       timeRTC[3+3*i] =  (date[i]&0x0F) + '0';
+    }
   return timeRTC;
 }
 

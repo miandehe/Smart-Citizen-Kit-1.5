@@ -19,32 +19,6 @@ File myFile;
 
 uint32_t SENSORvalue[8];
 
-
-//void setup()
-//  {
-//    sckBegin();
-//    driver.ESPoff();
-//    driver.chargerMode(HIGH, LOW); //USB source
-//  }
-//  
-//void loop()
-//  {
-////    Serial.println(driver.sckDate(__DATE__,__TIME__));
-////    Serial.println(__DATE__);
-////    delay(1000);
-//    //Serial.write(map((long int)sckGetNoise(), 0, 3300, 0, 255));
-//   
-////    Serial.println(driver.readI2C(CHARGER, 0x04), BIN);
-////    delay(1000);
-////      driver.writeResistor(4, 2500);
-////      delay(20);
-////      driver.writeResistor(5, 10000);
-////      delay(1000);
-////      Serial.print(driver.readResistor(4));
-////      Serial.print(", ");
-////      Serial.println(driver.readResistor(5));
-//  }
-
 void setup() {
   delay(5000);
   sckBegin();
@@ -96,19 +70,3 @@ void loop() {
   }
 #endif
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
