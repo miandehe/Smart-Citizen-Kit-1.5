@@ -46,16 +46,16 @@ public:
     void ESPoff();
     
     /*Charger commands*/
-    void chargerMode(boolean mode);
+    void chargerMode(boolean state1, boolean state2);
     
 //    /*Sensor temperature*/
 //    uint16_t readSHT(uint8_t type);
 //    void getSHT(uint32_t *__Temperature, uint32_t* __Humidity);
     
     /*Potenciometer*/ 
-    void writeResistor(byte deviceaddress, byte address, byte data );
+    void writeI2C(byte deviceaddress, byte address, byte data );
     void writeResistor(byte resistor, float value );
-    byte readResistor(int deviceaddress, byte address );
+    byte readI2C(int deviceaddress, byte address );
     float readResistor(byte resistor);
     
 private:

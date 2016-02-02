@@ -1,11 +1,8 @@
-boolean connected;                  
-
-#define buffer_length        32
-static char buffer[buffer_length];
-
 void sckBegin() {
   driver.begin();
-  driver.chargerMode(true);
+  
+  driver.chargerMode(HIGH, LOW);
+  
   sckWriteVH(CO_SENSOR, 2700); //VH_CO SENSOR Inicial
   digitalWrite(IO0, HIGH); //VH_CO SENSOR
 
@@ -45,56 +42,13 @@ boolean sckCompareDate(char* text, char* text1)
   return true;
 }
 
-float sckReadCharge() {
-//  float resistor = kr*sckReadMCP(MCP3, 0x00)/1000;    
-//  float current = 1000./(2+((resistor * 10)/(resistor + 10)));
-//#if debuggSCK
-//  Serial.print("Resistor : ");
-//  Serial.print(resistor);
-//  Serial.print(" kOhm, ");  
-//  Serial.print("Current : ");
-//  Serial.print(current);
-//  Serial.println(" mA");  
-//#endif
-//  return(current);
-}
-
-void sckWriteCharge(int current) {
-//  if (current < 100) current = 100;
-//  else if (current > 500) current = 500;
-//  float Rp = (1000./current)-2;
-//  float resistor = Rp*10/(10-Rp);
-//  sckWriteMCP(MCP3, 0x00, (uint8_t)(resistor*1000/kr));    
-//#if debuggSCK
-//  Serial.print("Rc : ");
-//  Serial.print(Rp + 2);
-//  Serial.print(" kOhm, ");
-//  Serial.print("Rpot : ");
-//  Serial.print(resistor);
-//  Serial.print(" kOhm, ");  
-//  Serial.print("Current : ");
-//  Serial.print(current);
-//  Serial.println(" mA");  
-//#endif
-}  
-
-boolean sckCheckRTC() {
-  Wire.beginTransmission(RTC_ADDRESS);
-  Wire.write(0x00); //Address
-  Wire.endTransmission();
-  delay(4);
-  Wire.requestFrom(RTC_ADDRESS,1);
-  unsigned long time = millis();
-  while (!Wire.available()) if ((millis() - time)>500) return false;
-  Wire.read();
-  return true;
-}
-
 uint16_t sckGetBattery() {
-  uint16_t temp = driver.levelRead(1);
-  temp = map(temp, VAL_MIN_BATTERY, VAL_MAX_BATTERY, 0, 1000);
-  if (temp>1000) temp=1000;
-  if (temp<0) temp=0;
+  uint16_t temp = driver.levelRead(1)*10;
+  #if !DataRaw 
+    temp = map(temp, VAL_MIN_BATTERY, VAL_MAX_BATTERY, 0, 1000);
+    if (temp>1000) temp=1000;
+    if (temp<0) temp=0;
+  #endif
 #if debuggSCK
   Serial.print("Vbat: ");
   Serial.print(voltage);
@@ -115,37 +69,6 @@ uint16_t sckGetCharger() {
 #endif
   return temp; 
 }
-
-char* itoa(int32_t number)
-{
-  byte count = 0;
-  uint32_t temp;
-  if (number < 0) {
-    temp = number*(-1); 
-    count++;
-  } 
-  while ((temp/10)!=0) 
-  {
-    temp = temp/10;
-    count++;
-  }
-  int i;
-  if (number < 0) {
-    temp = number*(-1);
-  } 
-  else temp = number;
-  for (i = count; i>=0; i--) 
-  { 
-    buffer[i] = temp%10 + '0'; 
-    temp = temp/10; 
-  }
-  if (number < 0) {
-    buffer[0] = '-';
-  } 
-  buffer[count + 1] = 0x00;
-  return buffer;   
-}
-
 
 
 

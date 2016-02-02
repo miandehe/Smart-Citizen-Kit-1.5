@@ -1,7 +1,8 @@
 void txSD() {
   Serial.println("*** txSD ***");
   // if the file opened okay, write to it:
-  if (SD.open("post.csv", FILE_WRITE)) {
+  myFile = SD.open("post.csv", FILE_WRITE);
+  if (myFile) {
   #if debuggEnabled
       Serial.println(F("Writing...")); 
   #endif 
@@ -13,9 +14,6 @@ void txSD() {
       else if (i<7) dec = 1000;
       else if (i<8) dec = 100;
       else dec = 1;
-
-      //myFile.print(i);
-      //myFile.print(" ");
       myFile.print(SENSORvalue[i]/dec);
       myFile.print(",");
     }
@@ -46,7 +44,11 @@ char* UNITS[10]={
   " C",
   " %",
   " lx",
+#if DataRaw
+  " mV",
+#else
   " %",
+#endif
   " V",
   " kOhm",
   " kOhm",

@@ -81,7 +81,7 @@ i2c ADDRESSES
 
 #define  VCC   3300. //mV 
 
-#define  VAL_MAX_BATTERY                             4200
+#define  VAL_MAX_BATTERY                             4208
 #define  VAL_MIN_BATTERY                             3000
 
 

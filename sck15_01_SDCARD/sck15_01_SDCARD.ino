@@ -9,7 +9,7 @@ SCKDriver driver;
 
 #define USBEnabled      true 
 #define sensorEnabled   true
-#define debuggEnabled   true
+#define debuggEnabled   false
 
 uint32_t timetransmit = 0;  
 uint32_t TimeUpdate   = 0;  //Variable temporal de tiempo entre actualizacion y actualizacion de los sensensores
@@ -18,20 +18,24 @@ uint32_t NumUpdates   = 0;  //Numero de actualizaciones antes de postear
 File myFile;
 
 uint32_t SENSORvalue[8];
-boolean csvInit = false;
 
 
 //void setup()
 //  {
 //    sckBegin();
 //    driver.ESPoff();
-//    driver.chargerMode(true); //USB source
+//    driver.chargerMode(HIGH, LOW); //USB source
 //  }
 //  
 //void loop()
 //  {
+////    Serial.println(driver.sckDate(__DATE__,__TIME__));
+////    Serial.println(__DATE__);
+////    delay(1000);
 //    //Serial.write(map((long int)sckGetNoise(), 0, 3300, 0, 255));
-//    Serial.println((unsigned long int)(sckGetNoise()), DEC);
+//   
+////    Serial.println(driver.readI2C(CHARGER, 0x04), BIN);
+////    delay(1000);
 ////      driver.writeResistor(4, 2500);
 ////      delay(20);
 ////      driver.writeResistor(5, 10000);

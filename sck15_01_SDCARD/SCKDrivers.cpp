@@ -38,6 +38,7 @@ void SCKDriver::begin() {
   digitalWrite(IO0, HIGH); 
   digitalWrite(IO1, HIGH); 
   resetshift();
+  writeI2C(CHARGER, 0x04, B10110010); //CHARGE VOLTAGE LIMIT 4208 mV
 }
 
 /*RTC commands*/
@@ -54,47 +55,45 @@ char* SCKDriver::sckDate(const char* date, const char* time){
       }
     buffer[j] = '-';
     j++;
+    buffer[j] = '0';
     // Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec 
     switch (date[0]) {
         case 'J': 
-            if (date[1] == 'a') buffer[j] = '1';
-            else if (date[2] == 'n') buffer[j] = '6';
-            else buffer[j] = '7';
+            if (date[1] == 'a') buffer[j+1] = '1';
+            else if (date[2] == 'n') buffer[j+1] = '6';
+            else buffer[j+1] = '7';
             break; 
         case 'F': 
-            buffer[j] = '2'; 
+            buffer[j+1] = '2'; 
             break;
         case 'A': 
-            if (date[1] == 'p') buffer[j] = '4';
-            else buffer[j] = '8';
+            if (date[1] == 'p') buffer[j+1] = '4';
+            else buffer[j+1] = '8';
             break;
         case 'M': 
-            if (date[2] == 'r') buffer[j] = '3';
-            else buffer[j] = '5';
+            if (date[2] == 'r') buffer[j+1] = '3';
+            else buffer[j+1] = '5';
             break;
         case 'S': 
-            buffer[j] = '9'; 
+            buffer[j+1] = '9'; 
             break;
         case 'O': 
             buffer[j] = '1'; 
             buffer[j+1] = '0';
-            j++;
             break;
         case 'N': 
             buffer[j] = '1'; 
             buffer[j+1] = '1';
-            j++;
             break;
         case 'D': 
             buffer[j] = '1'; 
             buffer[j+1] = '2';
-            j++;
             break;
     }
-  j++;
+  j=j+2;
   buffer[j] = '-';
   j++;
-  for  (int i = 4; date[i]!=' '; i++)
+  for  (int i = 5; date[i]!=' '; i++)
       {
         buffer[j] = date[i];
         j++;
@@ -121,7 +120,7 @@ boolean SCKDriver::RTCadjust(char *time) {
     else if(time[count] == ':') data_count++;
     else if ((time[count] >= '0')&&(time[count] <= '9'))
     { 
-      rtc[data_count] =(rtc[data_count]<<4)|(0x0F&time[count]);
+      rtc[data_count] =(rtc[data_count]<<4)|(time[count]-'0');
     }  
     else break;
     count++;
@@ -130,23 +129,15 @@ boolean SCKDriver::RTCadjust(char *time) {
   {
     Wire.beginTransmission(RTC_ADDRESS);
     Wire.write((int)0);
-    Wire.write(rtc[5]);
-    Wire.write(rtc[4]);
-    Wire.write(rtc[3]);
-    Wire.write(0x00);
-    Wire.write(rtc[2]);
-    Wire.write(rtc[1]);
-    Wire.write(rtc[0]);
+    Wire.write(rtc[5]|0x80); //0x00 SECOND
+    Wire.write(rtc[4]); //0x01 MINUTES
+    Wire.write(rtc[3]); //0x02 HOUR
+    Wire.write(0x00|0x08);   //0x03 DAY
+    Wire.write(rtc[2]); //0x04 DATE
+    Wire.write(rtc[1]); //0x05 MONTH
+    Wire.write(rtc[0]); //0x06 YEAR
     Wire.endTransmission();
-    delay(4);
-    Wire.beginTransmission(RTC_ADDRESS);
-    Wire.write(0x00); //Address
-    Wire.write(0x80); //Value
-    Wire.endTransmission();
-    Wire.beginTransmission(RTC_ADDRESS);
-    Wire.write(0x03); //Address
-    Wire.write(0x08); //Value
-    Wire.endTransmission();
+    delay(4);    
     return true;
   }
   return false;  
@@ -390,15 +381,16 @@ void SCKDriver::ESPoff()
 
 //Charger commands*/
 
-void SCKDriver::chargerMode(boolean mode)
+void SCKDriver::chargerMode(boolean state1, boolean state2)
   {
-    shiftWrite(PSEL, mode);  //Power source selection input. High indicates a USB host source and Low indicates an adapter source.
+    shiftWrite(PSEL, state1);  //Power source selection input. High indicates a USB host source and Low indicates an adapter source.
+    shiftWrite(OTG, state2);
   }
 
     
 /*Potenciometer*/ 
 
-void SCKDriver::writeResistor(byte deviceaddress, byte address, byte data ) {
+void SCKDriver::writeI2C(byte deviceaddress, byte address, byte data ) {
   Wire.beginTransmission(deviceaddress);
   Wire.write(address);
   Wire.write(data);
@@ -422,10 +414,10 @@ void SCKDriver::writeResistor(byte resistor, float value ) {
        POT = POT3;
        ADDR = resistor - 4;
      }
-   writeResistor(POT, ADDR, data);
+   writeI2C(POT, ADDR, data);
 }
 
-byte SCKDriver::readResistor(int deviceaddress, byte address ) {
+byte SCKDriver::readI2C(int deviceaddress, byte address ) {
   byte rdata = 0xFF;
   byte  data = 0x0000;
   Wire.beginTransmission(deviceaddress);
@@ -451,7 +443,7 @@ float SCKDriver::readResistor(byte resistor ) {
        POT = POT3;
        ADDR = resistor - 4;
      }
-   return readResistor(POT, ADDR)*kr;
+   return readI2C(POT, ADDR)*kr;
 }   
 
 
