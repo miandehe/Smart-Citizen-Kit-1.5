@@ -50,7 +50,6 @@ void setup() {
         Serial.println(F("post.csv exists ..."));
       #endif 
     }
-    
     timetransmit = millis();
     TimeUpdate = atol(driver.readData(EE_ADDR_TIME_UPDATE, 0, INTERNAL)); //Tiempo entre transmision y transmision en segundos
 }
@@ -61,7 +60,6 @@ void loop() {
   {  
     Serial.println("*** loop ***");
     timetransmit = millis();
-    TimeUpdate = atol(driver.readData(EE_ADDR_TIME_UPDATE, 0, INTERNAL)); 
     updateSensorsSD();
     txSD();
     #if USBEnabled
