@@ -7,7 +7,7 @@ void txSD() {
       Serial.println(F("Writing...")); 
   #endif 
     float dec = 0;
-    for (int i=0; i<8; i++)
+    for (int i=0; i<14; i++)
     {
       if (i<2) dec = 100;
       else if (i<4) dec = 10;
@@ -27,7 +27,7 @@ void txSD() {
   }
 }
 
-char* SENSOR[10]={
+char* SENSOR[15]={
   "Temperature",
   "Humidity",
   "Light",
@@ -36,11 +36,16 @@ char* SENSOR[10]={
   "Carbon Monxide",
   "Nitrogen Dioxide",
   "Noise",
-  "Wifi Spots",
+  "Accel X",
+  "Accel Y",
+  "Accel Z",
+  "Mag X",
+  "Mag Y",
+  "Mag Z",
   "UTC"
 };
 
-char* UNITS[10]={
+char* UNITS[15]={
   " C",
   " %",
   " lx",
@@ -58,6 +63,11 @@ char* UNITS[10]={
   " dB",
 #endif
   "",
+  "",
+  "",
+  "", 
+  "",
+  "",
   "" 
 };            
 
@@ -67,13 +77,15 @@ void updateSensorsSD() {
     SENSORvalue[2] = sckGetLight(); // %
     SENSORvalue[3] = sckGetBattery(); //%
     SENSORvalue[4] = sckGetCharger();  // mV
-    SENSORvalue[7] = sckGetNoise(); //dB    
+    SENSORvalue[7] = sckGetNoise(); //dB  
+    sckReadAcc(&SENSORvalue[8], &SENSORvalue[9], &SENSORvalue[10]);
+    sckReadMag(&SENSORvalue[11], &SENSORvalue[12], &SENSORvalue[13]);
 }
 
 void txDebugSD() {
   Serial.println("*** txDebugSD ***");
   float dec = 0;
-  for(int i=0; i<8; i++) 
+  for(int i=0; i<14; i++) 
   {
     if (i<2) dec = 100;
     else if (i<4) dec = 10;
@@ -85,7 +97,7 @@ void txDebugSD() {
     Serial.print((SENSORvalue[i])/dec); 
     Serial.println(UNITS[i]);
   }
-  Serial.print(SENSOR[9]);
+  Serial.print(SENSOR[14]);
   Serial.print(": "); 
   Serial.println(driver.RTCtime());
   Serial.println(F("*******************"));     
@@ -98,7 +110,7 @@ void txHeader() {
   #if debuggEnabled
       Serial.println(F("Writing...")); 
   #endif 
-    for (int i=0; i<8; i++)
+    for (int i=0; i<14; i++)
     {
       myFile.print(SENSOR[i]);
       myFile.print(" (");
@@ -106,7 +118,7 @@ void txHeader() {
       myFile.print(") ");
       myFile.print(", ");
     }
-    myFile.print(SENSOR[9]);
+    myFile.print(SENSOR[14]);
     myFile.println();
     // close the file:
     myFile.close();

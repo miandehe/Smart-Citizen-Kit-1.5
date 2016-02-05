@@ -70,6 +70,9 @@ i2c ADDRESSES
 #define EE_ADDR_TIME_UPDATE                         32  //16BYTES Tiempo entre actualizacion y actualizacion de los sensores en segundos
 #define EE_ADDR_NUMBER_UPDATES                      48  //4BYTES  Numero de actualizaciones antes de postear
 
+//Registros del acelerometro
+#define OUT_X_L_A          0x28
+#define OUT_X_L_M          0x08
 
 #define CO_SENSOR 0x00
 #define NO2_SENSOR 0x01

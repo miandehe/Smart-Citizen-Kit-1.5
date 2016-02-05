@@ -17,11 +17,12 @@ uint32_t NumUpdates   = 0;  //Numero de actualizaciones antes de postear
 
 File myFile;
 
-uint32_t SENSORvalue[8];
+uint32_t SENSORvalue[15];
 
 void setup() {
   delay(5000);
   sckBegin();
+  sckAccelDefault();
   sckConfig();
   driver.ESPoff();
   #if debuggEnabled
@@ -52,6 +53,7 @@ void setup() {
     }
     timetransmit = millis();
     TimeUpdate = atol(driver.readData(EE_ADDR_TIME_UPDATE, 0, INTERNAL)); //Tiempo entre transmision y transmision en segundos
+    
 }
 
 void loop() {  
