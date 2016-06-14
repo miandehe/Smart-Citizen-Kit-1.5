@@ -5,14 +5,14 @@ float RoNO2 = 2200;
 
   void sckWriteGAIN(float GAIN1, float GAIN2)
   {
-    driver.writeResistor(4, GAIN1);
+    driver.writeResistor(6, GAIN1);
     delay(20);
-    driver.writeResistor(5, GAIN2);
+    driver.writeResistor(7, GAIN2);
   }
 
   float sckReadGAIN()
   {
-    return ((22000/(driver.readResistor(4)+2440)+1)*(30000/driver.readResistor(5)+1));
+    return ((22000/(driver.readResistor(6)+2440)+1)*(62000/driver.readResistor(7)+1));
   }    
  
 
@@ -42,21 +42,21 @@ float RoNO2 = 2200;
 
     sckWriteVH(device, Vh);
       #if debuggSCK
-        if (device == NO2_SENSOR) Serial.print("NO2 SENSOR current: ");
-        else Serial.print("CO SENSOR corriente: ");
-        Serial.print(current_measure);
-        Serial.println(" mA");
-        if (device == NO2_SENSOR) Serial.print("NO2 SENSOR correction VH: ");
-        else  Serial.print("CO SENSOR correccion VH: ");
-        Serial.print(sckReadVH(device));
-        Serial.println(" mV");
+        if (device == NO2_SENSOR) SerialUSB.print("NO2 SENSOR current: ");
+        else SerialUSB.print("CO SENSOR corriente: ");
+        SerialUSB.print(current_measure);
+        SerialUSB.println(" mA");
+        if (device == NO2_SENSOR) SerialUSB.print("NO2 SENSOR correction VH: ");
+        else  SerialUSB.print("CO SENSOR correccion VH: ");
+        SerialUSB.print(sckReadVH(device));
+        SerialUSB.println(" mV");
         Vc = (float)driver.average(Sensor)*VCC/1023; //mV 
         current_measure = Vc/Rc; //mA 
-        if (device == NO2_SENSOR) Serial.print("NO2 SENSOR corrected current: ");
-        else Serial.print("CO SENSOR corrected current: ");
-        Serial.print(current_measure);
-        Serial.println(" mA");
-        Serial.println("Heating...");
+        if (device == NO2_SENSOR) SerialUSB.print("NO2 SENSOR corrected current: ");
+        else SerialUSB.print("CO SENSOR corrected current: ");
+        SerialUSB.print(current_measure);
+        SerialUSB.println(" mA");
+        SerialUSB.println("Heating...");
       #endif
     
   }
@@ -70,14 +70,14 @@ float RoNO2 = 2200;
      if (VL > VCC) VL = VCC;
      float Rs = ((VCC-VL)/VL)*RL; //Ohm
      #if debuggSCK
-        if (device == CO_SENSOR) Serial.print("CO SENSOR VL: ");
-        else Serial.print("NO2 SENSOR VL: ");
-        Serial.print(VL);
-        Serial.print(" mV, RS: ");
-        Serial.print(Rs);
-        Serial.print(" Ohm, RL: ");
-        Serial.print(RL);
-        Serial.println(" Ohm");
+        if (device == CO_SENSOR) SerialUSB.print("CO SENSOR VL: ");
+        else SerialUSB.print("NO2 SENSOR VL: ");
+        SerialUSB.print(VL);
+        SerialUSB.print(" mV, RS: ");
+        SerialUSB.print(Rs);
+        SerialUSB.print(" Ohm, RL: ");
+        SerialUSB.print(RL);
+        SerialUSB.println(" Ohm");
      #endif;  
      return Rs;
    }
@@ -150,9 +150,9 @@ float RoNO2 = 2200;
       else Lx=0;
       
        #if debuggSCK
-        Serial.print("BH1730: ");
-        Serial.print(Lx);
-        Serial.println(" Lx");
+        SerialUSB.print("BH1730: ");
+        SerialUSB.print(Lx);
+        SerialUSB.println(" Lx");
       #endif
      return Lx*10;
   }
@@ -166,39 +166,15 @@ float RoNO2 = 2200;
     float dB = 0;
     
     #if debuggSCK
-      Serial.print("nOISE: ");
-      Serial.print(mVRaw);
-      Serial.print(" mV, RSpu: ");
-      Serial.print(driver.readResistor(4));
-      Serial.print(", Ramp: ");
-      Serial.print(driver.readResistor(5));
-      Serial.print(", GAIN: ");
-      Serial.println(sckReadGAIN());
+      SerialUSB.print("nOISE: ");
+      SerialUSB.print(mVRaw);
+      SerialUSB.print(" mV, RSpu: ");
+      SerialUSB.print(driver.readResistor(4));
+      SerialUSB.print(", Ramp: ");
+      SerialUSB.print(driver.readResistor(5));
+      SerialUSB.print(", GAIN: ");
+      SerialUSB.println(sckReadGAIN());
     #endif
     return mVRaw; 
   }
 
-
-/*Sensor temperature*/
-  
-uint16_t sckReadSHT(uint8_t type){
-      uint16_t DATA = 0;
-      Wire.beginTransmission(Temperature);
-      Wire.write(type);
-      Wire.endTransmission();
-      Wire.requestFrom(Temperature,2);
-      unsigned long time = millis();
-      while (!Wire.available()) if ((millis() - time)>500) return 0x00;
-      DATA = Wire.read()<<8; 
-      while (!Wire.available()); 
-      DATA = (DATA|Wire.read()); 
-      DATA &= ~0x0003; 
-      return DATA;
-  }
-  
-void sckGetSHT(uint32_t* __Temperature, uint32_t* __Humidity)
-   {
-        *__Temperature = (-46.85 + (175.72*(sckReadSHT(0xE3)/65536.0)))*100;
-        *__Humidity    = (-6 + (125*(sckReadSHT(0xE5)/65536.0)))*100; 
-        
-    }

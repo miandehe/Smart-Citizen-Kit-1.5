@@ -1,4 +1,4 @@
-#define debuggSCK     false
+#define debuggSCK     true
 #define decouplerComp true
 #define DataRaw       true
 
@@ -9,38 +9,33 @@
 ARDUINO ports definitions - GPIOS and ADCs 
 
 */
+#define PANEL_LEVEL   0     // PANEL LEVEL
+#define BAT_LEVEL     1     // BAT LEVEL 
 
-#define AWAKE   4      // WIFLY AWAKE
-#define PANEL   A8     // PANEL LEVEL
-#define LEVEL   A7     // BAT LEVEL 
+#define IO0 9         // CO SENSOR_HEATHER
+#define IO1 8        // NO2 SENSOR_HEATHER
+#define IO2 3         
+#define IO3 2        
 
-#define IO0 5         // CO SENSOR_HEATHER
-#define IO1 13        // NO2 SENSOR_HEATHER
-#define IO2 9         
-#define IO3 10        
-
-//SHIFT REGISTER CONTROL
-#define DS 7          // DS 74HC595
-#define STCP 4        // STCP 74HC595 
-#define SHCP 12       // SHCP 74HC595 
-
-#define PSEL    0
-#define P_WIFI  1
-#define GPIO0   2
-#define RST_ESP 3
-#define CH_PD   4
+#define P_WIFI  0
+#define GPIO0   11
+#define RST_ESP 43
+#define CS_ESP  13
+#define CS_MMC  4
+#define CH_PD   1
 #define GPIO16  5
-#define OTG     6
-#define SEL_MUX 7
+#define RED     6
+#define GREEN   12
+#define BLUE    10
 
-#define CONTROL 8     // PIN CONTROL S2
+#define CONTROL 7     // PIN CONTROL S2
 
-#define S0 A4         //CO_SENSOR
-#define S1 A5         //NO2_SENSOR
-#define S2 A2         //SENS_CO CURRENT
-#define S3 A3         //SENS_NO2 CURRENT
-#define S4 A0         //MICRO
-#define S5 A1         
+#define S0 A3         //CO_SENSOR
+#define S1 A4         //NO2_SENSOR
+#define S2 A1         //SENS_CO CURRENT
+#define S3 A2         //SENS_NO2 CURRENT
+#define S4 A5         //MICRO
+#define S5 A0         
 
 
 
@@ -53,17 +48,18 @@ ARDUINO ports definitions - GPIOS and ADCs
 i2c ADDRESSES 
 */
 
-#define RTC_ADDRESS          0x6F    // Direction of the RTC
-#define E2PROM               0x50    // Direction of the EEPROM
 #define ACCEL                0x1D    // Direction of the LSM303D
-#define CHARGER              0x6B    // Direction of the BQ24292
 
-#define POT1                 0x51    // Direction of the Potenciometer 1 for MICS heather voltage
-#define POT2                 0x52    // Direction of the Potenciometer 2 for MICS measure
-#define POT3                 0x50    // Direction of the Potenciometer 3 for sensor audio
+
+#define POT1                 0x50    
+#define POT2                 0x51    // Direction of the Potenciometer 2 for MICS heather voltage
+#define POT3                 0x52    // Direction of the Potenciometer 3 for MICS measure
+#define POT4                 0x53    // Direction of the Potenciometer 4 for sensor audio
+
 #define SI1145               0x60 
 #define BH1730               0x29    // Direction of the light sensor
-#define Temperature          0x40    // Direction of the sht25    
+#define Temperature          0x40    // Direction of the sht21   
+#define ADC_DIR              0x48    // Direction of the ADC
 
 //Espacio reservado para los parametros de configuracion del SCK  
 #define EE_ADDR_TIME_VERSION                        0   //32BYTES 
@@ -74,8 +70,8 @@ i2c ADDRESSES
 #define OUT_X_L_A          0x28
 #define OUT_X_L_M          0x08
 
-#define CO_SENSOR 0x00
-#define NO2_SENSOR 0x01
+#define CO_SENSOR 0x02
+#define NO2_SENSOR 0x03
 
 #define  Rc0  10. //Ohm  Resistencia medida de corriente en el sensor CO sensor
 #define  Rc1  39. //Ohm Resistencia medida de corriente en el sensor NO2 sensor

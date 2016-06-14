@@ -15,17 +15,17 @@ void sckBegin() {
 
 void sckConfig(){
   
-  if (!sckCompareDate(__TIME__, driver.readData(EE_ADDR_TIME_VERSION, 0, INTERNAL)))
-  {
-    driver.RTCadjust(driver.sckDate(__DATE__,__TIME__));
-#if debuggEnabled
-    Serial.println(F("Resetting..."));
-#endif
-    for(uint16_t i=0; i<60; i++) driver.writeEEPROM(i, 0x00);  //Borrado de la memoria
-    driver.writeData(EE_ADDR_TIME_VERSION, 0, __TIME__, INTERNAL);
-    driver.writeData(EE_ADDR_TIME_UPDATE, 0, DEFAULT_TIME_UPDATE, INTERNAL);
-    driver.writeData(EE_ADDR_NUMBER_UPDATES, 0, DEFAULT_MIN_UPDATES, INTERNAL);
-  }
+//  if (!sckCompareDate(__TIME__, driver.readData(EE_ADDR_TIME_VERSION, 0, INTERNAL)))
+//  {
+//    driver.RTCadjust(driver.sckDate(__DATE__,__TIME__));
+//#if debuggEnabled
+//    SerialUSB.println(F("Resetting..."));
+//#endif
+//    for(uint16_t i=0; i<60; i++) driver.writeEEPROM(i, 0x00);  //Borrado de la memoria
+//    driver.writeData(EE_ADDR_TIME_VERSION, 0, __TIME__, INTERNAL);
+//    driver.writeData(EE_ADDR_TIME_UPDATE, 0, DEFAULT_TIME_UPDATE, INTERNAL);
+//    driver.writeData(EE_ADDR_NUMBER_UPDATES, 0, DEFAULT_MIN_UPDATES, INTERNAL);
+//  }
 
 }
 
@@ -50,12 +50,12 @@ uint16_t sckGetBattery() {
     if (temp<0) temp=0;
   #endif
 #if debuggSCK
-  Serial.print("Vbat: ");
-  Serial.print(voltage);
-  Serial.print(" mV, ");
-  Serial.print("Battery level: ");
-  Serial.print(temp/10.);
-  Serial.println(" %");
+  SerialUSB.print("Vbat: ");
+  SerialUSB.print(temp);
+  SerialUSB.print(" mV, ");
+  SerialUSB.print("Battery level: ");
+  SerialUSB.print(temp/10.);
+  SerialUSB.println(" %");
 #endif
   return temp; 
 }
@@ -63,9 +63,9 @@ uint16_t sckGetBattery() {
 uint16_t sckGetCharger() {
   uint16_t temp = driver.levelRead(0);
 #if debuggSCK
-  Serial.print("Charger voltage: ");
-  Serial.print(voltage);
-  Serial.print(" mV, ");
+  SerialUSB.print("Charger voltage: ");
+  SerialUSB.print(temp);
+  SerialUSB.print(" mV, ");
 #endif
   return temp; 
 }
@@ -116,12 +116,28 @@ void sckReadAccMag(byte reg, uint32_t* __x, uint32_t* __y, uint32_t* __z)
 void sckReadAcc(uint32_t* __x, uint32_t* __y, uint32_t* __z)
 {
   sckReadAccMag(OUT_X_L_A | (1 << 7), __x, __y,  __z);
+  #if debuggSCK
+    SerialUSB.print("Accelerometer x: ");
+    SerialUSB.print(*__x);
+    SerialUSB.print(" y: ");
+    SerialUSB.print(*__y);
+    SerialUSB.print(" z: ");
+    SerialUSB.println(*__z);
+  #endif
 }
 
 // Reads the 3 magnetometer channels and stores them in vector m
 void sckReadMag(uint32_t* __x, uint32_t* __y, uint32_t* __z)
 {
   sckReadAccMag(OUT_X_L_M | (1 << 7), __x, __y,  __z);
+  #if debuggSCK
+    SerialUSB.print("Magnetometer x: ");
+    SerialUSB.print(*__x);
+    SerialUSB.print(" y: ");
+    SerialUSB.print(*__y);
+    SerialUSB.print(" z: ");
+    SerialUSB.println(*__z);
+  #endif
 }
 
 

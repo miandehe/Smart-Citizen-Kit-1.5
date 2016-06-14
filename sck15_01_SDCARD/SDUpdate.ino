@@ -1,10 +1,10 @@
 void txSD() {
-  Serial.println("*** txSD ***");
+  SerialUSB.println("*** txSD ***");
   // if the file opened okay, write to it:
   myFile = SD.open("post.csv", FILE_WRITE);
   if (myFile) {
   #if debuggEnabled
-      Serial.println(F("Writing...")); 
+      SerialUSB.println(F("Writing...")); 
   #endif 
     float dec = 0;
     for (int i=0; i<14; i++)
@@ -17,12 +17,13 @@ void txSD() {
       myFile.print(SENSORvalue[i]/dec);
       myFile.print(",");
     }
-    myFile.print(driver.RTCtime());
+    //myFile.print(driver.RTCtime());
+    myFile.print("00:00:00");
     myFile.println();
     // close the file:
     myFile.close();
 #if debuggEnabled
-    Serial.println(F("Closing...")); 
+    SerialUSB.println(F("Closing...")); 
 #endif 
   }
 }
@@ -72,18 +73,18 @@ char* UNITS[15]={
 };            
 
 void updateSensorsSD() {
-    sckGetSHT(&SENSORvalue[0], &SENSORvalue[1]);
+    driver.getSHT(&SENSORvalue[0], &SENSORvalue[1]);
     sckGetMICS(&SENSORvalue[5], &SENSORvalue[6]);
     SENSORvalue[2] = sckGetLight(); // %
-    SENSORvalue[3] = sckGetBattery(); //%
-    SENSORvalue[4] = sckGetCharger();  // mV
+   // SENSORvalue[3] = sckGetBattery(); //%
+    //SENSORvalue[4] = sckGetCharger();  // mV
     SENSORvalue[7] = sckGetNoise(); //dB  
     sckReadAcc(&SENSORvalue[8], &SENSORvalue[9], &SENSORvalue[10]);
     sckReadMag(&SENSORvalue[11], &SENSORvalue[12], &SENSORvalue[13]);
 }
 
 void txDebugSD() {
-  Serial.println("*** txDebugSD ***");
+  SerialUSB.println("*** txDebugSD ***");
   float dec = 0;
   for(int i=0; i<14; i++) 
   {
@@ -92,23 +93,24 @@ void txDebugSD() {
     else if (i<7) dec = 1000;
     else if (i<8) dec = 100;
     else dec = 1;
-    Serial.print(SENSOR[i]);
-    Serial.print(": "); 
-    Serial.print((SENSORvalue[i])/dec); 
-    Serial.println(UNITS[i]);
+    SerialUSB.print(SENSOR[i]);
+    SerialUSB.print(": "); 
+    SerialUSB.print((SENSORvalue[i])/dec); 
+    SerialUSB.println(UNITS[i]);
   }
-  Serial.print(SENSOR[14]);
-  Serial.print(": "); 
-  Serial.println(driver.RTCtime());
-  Serial.println(F("*******************"));     
+  SerialUSB.print(SENSOR[14]);
+  SerialUSB.print(": "); 
+  //SerialUSB.println(driver.RTCtime());
+  SerialUSB.println("00:00:00");
+  SerialUSB.println(F("*******************"));     
 }
 
 void txHeader() { 
-  Serial.println("*** txHeader ***");
+  SerialUSB.println("*** txHeader ***");
   // if the file opened okay, write to it:
   if (SD.open("post.csv", FILE_WRITE)) {
   #if debuggEnabled
-      Serial.println(F("Writing...")); 
+      SerialUSB.println(F("Writing...")); 
   #endif 
     for (int i=0; i<14; i++)
     {
@@ -123,7 +125,7 @@ void txHeader() {
     // close the file:
     myFile.close();
     #if debuggEnabled
-        Serial.println(F("Closing...")); 
+        SerialUSB.println(F("Closing...")); 
     #endif 
   }
 }
