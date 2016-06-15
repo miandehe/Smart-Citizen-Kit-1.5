@@ -7,7 +7,7 @@
 SCKDriver driver;
 
 #define USBEnabled      true 
-#define sensorEnabled   false
+#define sensorEnabled   true
 #define debuggEnabled   false
 
 uint32_t timetransmit = 0;  
@@ -16,7 +16,7 @@ uint32_t NumUpdates   = 0;  //Numero de actualizaciones antes de postear
 
 File myFile;
 
-uint32_t SENSORvalue[15];
+uint32_t SENSORvalue[20];
 
 void setup() {
   delay(5000);
@@ -53,7 +53,7 @@ void setup() {
     timetransmit = millis();
     TimeUpdate = 10;
     //TimeUpdate = atol(driver.readData(EE_ADDR_TIME_UPDATE, 0, INTERNAL)); //Tiempo entre transmision y transmision en segundos
-    
+//    driver.writeADC(0, B11001100);
 }
 
 void loop() {  
@@ -70,16 +70,21 @@ void loop() {
     delay(2000);
 //  }
 #endif
-    driver.writeADC(0, B11000110);
-    //sckReadAcc(&SENSORvalue[8], &SENSORvalue[9], &SENSORvalue[10]);
-    //sckReadMag(&SENSORvalue[11], &SENSORvalue[12], &SENSORvalue[13]);
-    SerialUSB.print(driver.readADC(6));
-    SerialUSB.print(" ");
-    SerialUSB.print(driver.readADC(7));
-    SerialUSB.print(" ");
-    SerialUSB.println((uint16_t)(driver.readADC(6)<<4)|driver.readADC(7)>>4);
-    SerialUSB.print(" ");
-    SerialUSB.println(((uint16_t)(driver.readADC(6)<<4)|driver.readADC(7)>>4)*3300/4095.);
-    delay(100);
+    
+//    //sckReadAcc(&SENSORvalue[8], &SENSORvalue[9], &SENSORvalue[10]);
+//    //sckReadMag(&SENSORvalue[11], &SENSORvalue[12], &SENSORvalue[13]);
+
+//    SerialUSB.print((driver.readADC(0))*3300/4095.);
+//    SerialUSB.print(" ");
+//    SerialUSB.print(driver.readCurrent()/1000*(driver.readADC(1))*3300/4095.);
+//    SerialUSB.print("mA ");
+//    SerialUSB.print(2*(driver.readADC(2))*3300/4095.);
+//    SerialUSB.print(" ");
+//    SerialUSB.print(2*(driver.readADC(3))*3300/4095.);
+//    SerialUSB.print(" ");
+//    SerialUSB.print(driver.readCurrent());
+//    SerialUSB.print(" ");
+//    SerialUSB.println(driver.readResistor(0)+3300);
+//    delay(100);
     
 }

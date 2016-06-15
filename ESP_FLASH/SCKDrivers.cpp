@@ -40,8 +40,8 @@ void SCKDriver::begin() {
   digitalWrite(IO0, HIGH); 
   digitalWrite(IO1, HIGH); 
   digitalWrite(RED, HIGH);
-  digitalWrite(GREEN, LOW);
-  digitalWrite(BLUE, HIGH);
+  digitalWrite(GREEN, HIGH);
+  digitalWrite(BLUE, LOW);
   //writeI2C(CHARGER, 0x04, B10110010); //CHARGE VOLTAGE LIMIT 4208 mV
 }
 
