@@ -1,6 +1,8 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>
+
+
 #include "Constants.h"
 #include "SCKDrivers.h"
 
@@ -8,7 +10,7 @@ SCKDriver driver;
 
 #define USBEnabled      true 
 #define sensorEnabled   true
-#define debuggEnabled   false
+#define debuggEnabled   true
 
 uint32_t timetransmit = 0;  
 uint32_t TimeUpdate   = 0;  //Variable temporal de tiempo entre actualizacion y actualizacion de los sensensores
@@ -16,10 +18,9 @@ uint32_t NumUpdates   = 0;  //Numero de actualizaciones antes de postear
 
 File myFile;
 
-uint32_t SENSORvalue[20];
+float SENSORvalue[20];
 
 void setup() {
-  delay(5000);
   sckBegin();
   sckAccelDefault();
   sckConfig();
@@ -27,7 +28,7 @@ void setup() {
   #if debuggEnabled
     SerialUSB.print(F("Initializing SD card..."));
   #endif 
-    if (!SD.begin(11)) {
+    if (!SD.begin(CS_MMC)) {
   #if debuggEnabled
       SerialUSB.println(F("initialization failed!"));
   #endif 
@@ -69,11 +70,7 @@ void loop() {
     #endif
     delay(2000);
 //  }
-#endif
-    
-//    //sckReadAcc(&SENSORvalue[8], &SENSORvalue[9], &SENSORvalue[10]);
-//    //sckReadMag(&SENSORvalue[11], &SENSORvalue[12], &SENSORvalue[13]);
-
+#endif  
 //    SerialUSB.print((driver.readADC(0))*3300/4095.);
 //    SerialUSB.print(" ");
 //    SerialUSB.print(driver.readCurrent()/1000*(driver.readADC(1))*3300/4095.);
@@ -85,6 +82,5 @@ void loop() {
 //    SerialUSB.print(driver.readCurrent());
 //    SerialUSB.print(" ");
 //    SerialUSB.println(driver.readResistor(0)+3300);
-//    delay(100);
-    
+//    delay(100); 
 }

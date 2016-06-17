@@ -97,7 +97,7 @@ float RoNO2 = 2200;
        return Rs;
   }
   
-  void sckGetMICS(uint32_t* __RsCO, uint32_t* __RsNO2){          
+  void sckGetMICS(float* __RsCO, float* __RsNO2){          
        
         /*Correccion de la tension del Heather*/
         sckHeat(CO_SENSOR, 32); //Corriente en mA
@@ -169,9 +169,9 @@ float RoNO2 = 2200;
       SerialUSB.print("nOISE: ");
       SerialUSB.print(mVRaw);
       SerialUSB.print(" mV, RSpu: ");
-      SerialUSB.print(driver.readResistor(4));
+      SerialUSB.print(driver.readResistor(6));
       SerialUSB.print(", Ramp: ");
-      SerialUSB.print(driver.readResistor(5));
+      SerialUSB.print(driver.readResistor(7));
       SerialUSB.print(", GAIN: ");
       SerialUSB.println(sckReadGAIN());
     #endif

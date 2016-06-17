@@ -3,28 +3,27 @@ void txSD() {
   // if the file opened okay, write to it:
   myFile = SD.open("post.csv", FILE_WRITE);
   if (myFile) {
+  digitalWrite(GREEN, HIGH);
+  digitalWrite(RED, LOW);
   #if debuggEnabled
       SerialUSB.println(F("Writing...")); 
   #endif 
     float dec = 0;
     for (int i=0; i<15; i++)
     {
-      if (i<2) dec = 100;
-      else if (i<4) dec = 10;
-      else if (i<7) dec = 1000;
-      else if (i<8) dec = 100;
-      else dec = 1;
-      myFile.print(SENSORvalue[i]/dec);
+      myFile.print(SENSORvalue[i]);
       myFile.print(",");
     }
-    //myFile.print(driver.RTCtime());
-    myFile.print("00:00:00");
+    myFile.print(driver.RTCtime());
+//    myFile.print("00:00:00");
     myFile.println();
     // close the file:
     myFile.close();
-#if debuggEnabled
-    SerialUSB.println(F("Closing...")); 
-#endif 
+  #if debuggEnabled
+      SerialUSB.println(F("Closing...")); 
+  #endif 
+  digitalWrite(GREEN, LOW);
+  digitalWrite(RED, HIGH);
   }
 }
 
@@ -98,8 +97,7 @@ void txDebugSD() {
   }
   SerialUSB.print(SENSOR[15]);
   SerialUSB.print(": "); 
-  //SerialUSB.println(driver.RTCtime());
-  SerialUSB.println("00:00:00");
+  SerialUSB.println(driver.RTCtime());
   SerialUSB.println(F("*******************"));     
 }
 

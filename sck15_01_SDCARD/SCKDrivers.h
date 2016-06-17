@@ -16,16 +16,17 @@
 #define __DRIVER_H__
 
 #include <Arduino.h>
+#include <RTCZero.h>
 
 class SCKDriver {
 public:  
     void begin();
     
     /*RTC commands*/
-//    char* sckDate(const char* date, const char* time);
-//    boolean RTCadjust(char *time);
-//    boolean RTCtime(char *time);
-//    char* RTCtime();
+    char* sckDate(const char* date, const char* time);
+    boolean RTCadjust(char *time);
+    boolean RTCtime(char *time);
+    char* RTCtime();
     
     /*Inputs an outputs control*/
     float average(int anaPin);
@@ -50,7 +51,7 @@ public:
     float readCurrentCharge();
     /*Sensor temperature*/
     uint16_t readSHT(uint8_t type);
-    void getSHT(uint32_t* __Temperature, uint32_t* __Humidity);
+    void getSHT(float* __Temperature, float* __Humidity);
     
     /*Potenciometer*/ 
     void writeI2C(byte deviceaddress, byte address, byte data );

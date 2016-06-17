@@ -17,11 +17,13 @@
 #include <Wire.h>
 //#include <EEPROM.h>
 
+/* Create an rtc object */
+RTCZero rtc;
+
 #define debug false
 
 void SCKDriver::begin() {
-  Wire.begin();
-  //TWBR = ((F_CPU / TWI_FREQ) - 16) / 2;  
+  Wire.begin(); 
   SerialUSB.begin(115200);
   Serial.begin(115200);
   pinMode(IO0, OUTPUT); //VH_CO SENSOR
@@ -42,6 +44,23 @@ void SCKDriver::begin() {
   digitalWrite(RED, HIGH);
   digitalWrite(GREEN, LOW);
   digitalWrite(BLUE, HIGH);
+  
+  rtc.begin(); // initialize RTC 24H format
+  /* Change these values to set the current initial time */
+  const byte seconds = 0;
+  const byte minutes = 0;
+  const byte hours = 16;
+  
+  /* Change these values to set the current initial date */
+  const byte day = 15;
+  const byte month = 6;
+  const byte year = 15;
+  
+//  rtc.setTime(hours, minutes, seconds);
+//  rtc.setDate(day, month, year);
+  
+   RTCadjust(sckDate(__DATE__,__TIME__));
+  
   //writeI2C(CHARGER, 0x04, B10110010); //CHARGE VOLTAGE LIMIT 4208 mV
 }
 
@@ -52,21 +71,20 @@ uint16_t SCKDriver::readSHT(uint8_t type){
       Wire.beginTransmission(Temperature);
       Wire.write(type);
       Wire.endTransmission();
-      Wire.requestFrom(Temperature,2);
+      Wire.requestFrom(Temperature,3);
       unsigned long time = millis();
       while (!Wire.available()) if ((millis() - time)>500) return 0x00;
       DATA = Wire.read()<<8; 
-      while (!Wire.available()); 
-      DATA = (DATA|Wire.read()); 
+      DATA += Wire.read(); 
+      Wire.read();
       DATA &= ~0x0003; 
       return DATA;
   }
   
-void SCKDriver::getSHT(uint32_t* __Temperature, uint32_t* __Humidity)
+void SCKDriver::getSHT(float* __Temperature, float* __Humidity)
    {
         *__Temperature = (-46.85 + (175.72*(readSHT(0xE3)/65536.0)));
-        *__Humidity    = (-6 + (125*(readSHT(0xE5)/65536.0))); 
-        
+        *__Humidity    = (-6 + (125*(readSHT(0xE5)/65536.0)));   
     }
     
 /*RTC commands*/
@@ -74,143 +92,121 @@ void SCKDriver::getSHT(uint32_t* __Temperature, uint32_t* __Humidity)
 #define buffer_length        32
 static char buffer[buffer_length];
 
-//char* SCKDriver::sckDate(const char* date, const char* time){
-//    int j = 0;
-//    for  (int i = 7; date[i]!=0x00; i++)
-//      {
-//        buffer[j] = date[i];
-//        j++;
-//      }
-//    buffer[j] = '-';
-//    j++;
-//    // Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec 
-//    switch (date[0]) {
-//        case 'J': 
-//            if (date[1] == 'a') buffer[j] = '1';
-//            else if (date[2] == 'n') buffer[j] = '6';
-//            else buffer[j] = '7';
-//            break; 
-//        case 'F': 
-//            buffer[j] = '2'; 
-//            break;
-//        case 'A': 
-//            if (date[1] == 'p') buffer[j] = '4';
-//            else buffer[j] = '8';
-//            break;
-//        case 'M': 
-//            if (date[2] == 'r') buffer[j] = '3';
-//            else buffer[j] = '5';
-//            break;
-//        case 'S': 
-//            buffer[j] = '9'; 
-//            break;
-//        case 'O': 
-//            buffer[j] = '1'; 
-//            buffer[j+1] = '0';
-//            j++;
-//            break;
-//        case 'N': 
-//            buffer[j] = '1'; 
-//            buffer[j+1] = '1';
-//            j++;
-//            break;
-//        case 'D': 
-//            buffer[j] = '1'; 
-//            buffer[j+1] = '2';
-//            j++;
-//            break;
-//    }
-//  j++;
-//  buffer[j] = '-';
-//  j++;
-//  byte k = 4;
-//  if (date[4] == ' ')  k = 5;
-//  for  (int i = k; date[i]!=' '; i++)
-//      {
-//        buffer[j] = date[i];
-//        j++;
-//      }
-//  buffer[j] = ' ';
-//  j++;
-//  for  (int i = 0; time[i]!=0x00; i++)
-//    {
-//      buffer[j] = time[i];
-//      j++;
-//    }
-//  buffer[j]=0x00;   
-//  return buffer;
-//}
+char* SCKDriver::sckDate(const char* date, const char* time){
+    int j = 0;
+    for  (int i = 7; date[i]!=0x00; i++)
+      {
+        buffer[j] = date[i];
+        j++;
+      }
+    buffer[j] = '-';
+    j++;
+    // Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec 
+    switch (date[0]) {
+        case 'J': 
+            if (date[1] == 'a') buffer[j] = '1';
+            else if (date[2] == 'n') buffer[j] = '6';
+            else buffer[j] = '7';
+            break; 
+        case 'F': 
+            buffer[j] = '2'; 
+            break;
+        case 'A': 
+            if (date[1] == 'p') buffer[j] = '4';
+            else buffer[j] = '8';
+            break;
+        case 'M': 
+            if (date[2] == 'r') buffer[j] = '3';
+            else buffer[j] = '5';
+            break;
+        case 'S': 
+            buffer[j] = '9'; 
+            break;
+        case 'O': 
+            buffer[j] = '1'; 
+            buffer[j+1] = '0';
+            j++;
+            break;
+        case 'N': 
+            buffer[j] = '1'; 
+            buffer[j+1] = '1';
+            j++;
+            break;
+        case 'D': 
+            buffer[j] = '1'; 
+            buffer[j+1] = '2';
+            j++;
+            break;
+    }
+  j++;
+  buffer[j] = '-';
+  j++;
+  byte k = 4;
+  if (date[4] == ' ')  k = 5;
+  for  (int i = k; date[i]!=' '; i++)
+      {
+        buffer[j] = date[i];
+        j++;
+      }
+  buffer[j] = ' ';
+  j++;
+  for  (int i = 0; time[i]!=0x00; i++)
+    {
+      buffer[j] = time[i];
+      j++;
+    }
+  buffer[j]=0x00;   
+  return buffer;
+}
 
-//boolean SCKDriver::RTCadjust(char *time) {    
-//  byte rtc[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-//  byte count = 0x00;
-//  byte data_count=0;
-//  while (time[count]!=0x00)
-//  {
-//    if(time[count] == '-') data_count++;
-//    else if(time[count] == ' ') data_count++;
-//    else if(time[count] == ':') data_count++;
-//    else if ((time[count] >= '0')&&(time[count] <= '9'))
-//    { 
-//      rtc[data_count] =(rtc[data_count]<<4)|(time[count]-'0');
-//    }  
-//    else break;
-//    count++;
-//  }  
-//  if (data_count == 5)
-//  {
-//    Wire.beginTransmission(RTC_ADDRESS);
-//    Wire.write((int)0);
-//    Wire.write(rtc[5]|0x80); //0x00 SECOND
-//    Wire.write(rtc[4]); //0x01 MINUTES
-//    Wire.write(rtc[3]); //0x02 HOUR
-//    Wire.write(0x00|0x08);   //0x03 DAY
-//    Wire.write(rtc[2]); //0x04 DATE
-//    Wire.write(rtc[1]); //0x05 MONTH
-//    Wire.write(rtc[0]); //0x06 YEAR
-//    Wire.endTransmission();
-//    //delay(4);    
-//    return true;
-//  }
-//  return false;  
-//}
-//
-//char timeRTC[20] = {'2', '0', '0', '0', '-', '0', '0', '-', '0', '0', ' ', '0', '0', ':', '0', '0', ':', '0', '0', 0x00};
-//
-//boolean SCKDriver::RTCtime(char *time) {
-//  uint8_t date[6] = {0xFF, 0x1F, 0xFF, 0xFF, 0xFF, 0x7F};
-//  for (int i=0; i<20; i++) time[i] = timeRTC[i];
-//  Wire.beginTransmission(RTC_ADDRESS);
-//  Wire.write((int)0);  
-//  Wire.endTransmission();
-//  Wire.requestFrom(RTC_ADDRESS, 7);
-//  for (int i=5; i>2; i--) date[i] = (Wire.read() & date[i]);
-//  Wire.read();
-//  for (int i=2; i>=0; i--) date[i] = (Wire.read() & date[i]);
-//  for (int i=0; i<6; i++) 
-//    {
-//       time[2+3*i] =  (date[i]>>4) + '0';
-//       time[3+3*i] =  (date[i]&0x0F) + '0';
-//    }
-//  return true;
-//}
-//
-//char* SCKDriver::RTCtime() {
-//  uint8_t date[6] = {0xFF, 0x1F, 0xFF, 0xFF, 0xFF, 0x7F};
-//  Wire.beginTransmission(RTC_ADDRESS);
-//  Wire.write((int)0);  
-//  Wire.endTransmission();
-//  Wire.requestFrom(RTC_ADDRESS, 7);
-//  for (int i=5; i>2; i--) date[i] = (Wire.read() & date[i]);
-//  Wire.read();
-//  for (int i=2; i>=0; i--) date[i] = (Wire.read() & date[i]);
-//  for (int i=0; i<6; i++) 
-//    {
-//       timeRTC[2+3*i] =  (date[i]>>4) + '0';
-//       timeRTC[3+3*i] =  (date[i]&0x0F) + '0';
-//    }
-//  return timeRTC;
-//}
+boolean SCKDriver::RTCadjust(char *time) {    
+  char rtcval[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  byte count = 0x02;
+  byte data_count=0;
+  while (time[count]!=0x00)
+  {
+    if(time[count] == '-') data_count++;
+    else if(time[count] == ' ') data_count++;
+    else if(time[count] == ':') data_count++;
+    else if ((time[count] >= '0')&&(time[count] <= '9'))
+    { 
+      //rtcval[data_count] =(rtcval[data_count]<<4)|(time[count]-'0');
+      rtcval[data_count] =(rtcval[data_count]*10)+(time[count]-'0');
+    }  
+    else break;
+    count++;
+  }  
+  if (data_count == 5)
+  {
+    rtc.setTime(rtcval[3], rtcval[4], rtcval[5]);
+    rtc.setDate(rtcval[2], rtcval[1], rtcval[0]);
+    return true;
+  }
+  return false;  
+}
+
+char timeRTC[20] = {'2', '0', '0', '0', '-', '0', '0', '-', '0', '0', ' ', '0', '0', ':', '0', '0', ':', '0', '0', 0x00};
+
+boolean SCKDriver::RTCtime(char *time) {
+  uint8_t date[6] = {rtc.getYear(),rtc.getMonth(), rtc.getDay(), rtc.getHours(), rtc.getMinutes(), rtc.getSeconds()};
+  for (int i=0; i<20; i++) time[i] = timeRTC[i];
+  for (int i=0; i<6; i++) 
+    {
+       time[2+3*i] =  (date[i]/10) + '0';
+       time[3+3*i] =  (date[i]%10) + '0';
+    }
+  return true;
+}
+
+char* SCKDriver::RTCtime() {
+  uint8_t date[6] = {rtc.getYear(),rtc.getMonth(), rtc.getDay(), rtc.getHours(), rtc.getMinutes(), rtc.getSeconds()};
+  for (int i=0; i<6; i++) 
+    {
+       timeRTC[2+3*i] =  (date[i]/10) + '0';
+       timeRTC[3+3*i] =  (date[i]%10) + '0';
+    }
+  return timeRTC;
+}
 
 /*Inputs an outputs control*/
 
@@ -436,7 +432,7 @@ float SCKDriver::readResistor(byte resistor ) {
      }
    else if ((resistor==6)||(resistor==7))
      {
-       POT = POT3;
+       POT = POT4;
        ADDR = resistor - 6;
      }
    return readI2C(POT, ADDR)*kr;

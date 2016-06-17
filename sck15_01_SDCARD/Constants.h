@@ -14,13 +14,13 @@ ARDUINO ports definitions - GPIOS and ADCs
 #define IO0 9         // CO SENSOR_HEATHER
 #define IO1 8        // NO2 SENSOR_HEATHER
 #define IO2 3         
-#define IO3 2        
+#define IO3 4        
 
 #define P_WIFI  0
 #define GPIO0   11
 #define RST_ESP 43
 #define CS_ESP  13
-#define CS_MMC  4
+#define CS_MMC  2
 #define CH_PD   1
 #define GPIO16  5
 #define RED     6
@@ -47,7 +47,7 @@ ARDUINO ports definitions - GPIOS and ADCs
 i2c ADDRESSES 
 */
 
-#define ACCEL                0x1D    // Direction of the LSM303D
+#define ACCMAG                0x1D    // Direction of the LSM303D
 
 
 #define POT1                 0x50    
