@@ -10,14 +10,13 @@
 
 SCKDriver driver;
 SCKUrban urban;
-SCKBase base;
 
 #define USBEnabled      true 
 #define sensorEnabled   true
 #define debuggEnabled   false
 
 uint32_t timetransmit = 0;  
-uint32_t TimeUpdate   = 0;  //Variable temporal de tiempo entre actualizacion y actualizacion de los sensensores
+uint32_t TimeUpdate   = 10;  //Variable temporal de tiempo entre actualizacion y actualizacion de los sensensores
 uint32_t NumUpdates   = 0;  //Numero de actualizaciones antes de postear
 
 File myFile;
@@ -25,9 +24,7 @@ File myFile;
 float SENSORvalue[20];
 
 void setup() {
-  base.begin();
   urban.begin();
-  base.config();
   driver.ESPoff();
   #if debuggEnabled
     SerialUSB.print(F("Initializing SD card..."));
@@ -47,7 +44,6 @@ void setup() {
       #endif 
       SD.open("post.csv", FILE_WRITE);
       myFile.close();
-      delay(1000);
       txHeader();
       
     } else{
@@ -56,8 +52,6 @@ void setup() {
       #endif 
     }
     timetransmit = millis();
-    TimeUpdate = 10;
-    //TimeUpdate = atol(driver.readData(EE_ADDR_TIME_UPDATE, 0, INTERNAL)); //Tiempo entre transmision y transmision en segundos
 //    driver.writeADC(0, B11001100);
 }
 
@@ -74,6 +68,8 @@ void loop() {
     #endif
   }
 #endif  
+  urban.management();
+  
 //    SerialUSB.print((driver.readADC(0))*3300/4095.);
 //    SerialUSB.print(" ");
 //    SerialUSB.print(driver.readCurrent()/1000*(driver.readADC(1))*3300/4095.);

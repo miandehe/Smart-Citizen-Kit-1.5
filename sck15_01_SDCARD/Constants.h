@@ -27,7 +27,7 @@ ARDUINO ports definitions - GPIOS and ADCs
 #define GREEN   12
 #define BLUE    10
 
-#define CONTROL 7     // PIN CONTROL S2
+#define CONTROL 7     // PIN CONTROL 
 
 #define S0 A3         //CO_SENSOR
 #define S1 A4         //NO2_SENSOR

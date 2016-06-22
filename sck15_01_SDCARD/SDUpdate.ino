@@ -3,7 +3,6 @@ void txSD() {
   // if the file opened okay, write to it:
   myFile = SD.open("post.csv", FILE_WRITE);
   if (myFile) {
-  digitalWrite(GREEN, HIGH);
   digitalWrite(RED, LOW);
   #if debuggEnabled
       SerialUSB.println(F("Writing...")); 
@@ -22,7 +21,6 @@ void txSD() {
   #if debuggEnabled
       SerialUSB.println(F("Closing...")); 
   #endif 
-  digitalWrite(GREEN, LOW);
   digitalWrite(RED, HIGH);
   }
 }

@@ -59,6 +59,7 @@ public:
     /*Analog to digital converter*/
     uint16_t readADC(byte channel);
     void ADCini();
+    void ADCoff();
     
     /*Gas sensor*/ 
     void writeVH(byte device, long voltage );

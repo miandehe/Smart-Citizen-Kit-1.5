@@ -408,7 +408,7 @@ float SCKDriver::readResistor(byte resistor ) {
  uint16_t SCKDriver::readADC(byte channel)
   {
     byte dir[4] = {2,4,6,8};
-    byte temp = readI2C(ADC_DIR,0)|B11000000;
+    byte temp = readI2C(ADC_DIR,0)|B11000010;
     writeI2C(ADC_DIR, 0, temp);
     
     delay(100);
@@ -420,6 +420,12 @@ float SCKDriver::readResistor(byte resistor ) {
 void SCKDriver::ADCini()
   {
     byte temp = readI2C(ADC_DIR,0)&B00000011;
+    writeI2C(ADC_DIR, 0, temp);
+  }
+
+void SCKDriver::ADCoff()
+  {
+    byte temp = readI2C(ADC_DIR,0)&B00000000;
     writeI2C(ADC_DIR, 0, temp);
   }
 

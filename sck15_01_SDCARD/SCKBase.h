@@ -3,7 +3,9 @@
 class SCKBase {
 public:  
     void begin();
-    void config();
+    void awake();
+    boolean button();
+    void sleep();
 private:
 
 

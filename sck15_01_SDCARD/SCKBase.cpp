@@ -4,6 +4,28 @@
 
 SCKDriver driver__;
 
+boolean state_ = false;
+boolean state_ant = !state_;
+
+boolean SCKBase::button() {
+  if (state_ == true) 
+  {
+    state_=false;
+    return true;
+  }
+  return state_;
+}
+
+uint32_t count = 0;
+void blink() {
+  count++;
+  if (count>100000)
+    {
+      state_ = true;
+      count = 0;
+    }
+}
+
 void SCKBase::begin() {
   driver__.begin();
   driver__.writeCurrent(200);
@@ -11,24 +33,29 @@ void SCKBase::begin() {
   driver__.RTCini();
   driver__.RTCadjust(driver__.sckDate(__DATE__,__TIME__));
   driver__.accelDefault();
+  attachInterrupt(CONTROL, blink, LOW);
+  SCB->SCR |= 1<<2; // Enable deep-sleep mode
+  
+  // Set the EIC (External Interrupt Controller) to wake up the MCU
+  // on an external interrupt from digital pin 7. (It's EIC channel 5)
+  EIC->WAKEUP.reg = EIC_WAKEUP_WAKEUPEN5;
+}
 
-
+void SCKBase::awake() {
+  digitalWrite(RED, HIGH);
+  digitalWrite(GREEN, LOW);
+  digitalWrite(BLUE, HIGH); 
   
 }
 
-void SCKBase::config(){
-  
-//  if (!sckCompareDate(__TIME__, driver.readData(EE_ADDR_TIME_VERSION, 0, INTERNAL)))
-//  {
-//    driver.RTCadjust(driver.sckDate(__DATE__,__TIME__));
-//#if debuggEnabled
-//    SerialUSB.println(F("Resetting..."));
-//#endif
-//    for(uint16_t i=0; i<60; i++) driver.writeEEPROM(i, 0x00);  //Borrado de la memoria
-//    driver.writeData(EE_ADDR_TIME_VERSION, 0, __TIME__, INTERNAL);
-//    driver.writeData(EE_ADDR_TIME_UPDATE, 0, DEFAULT_TIME_UPDATE, INTERNAL);
-//    driver.writeData(EE_ADDR_NUMBER_UPDATES, 0, DEFAULT_MIN_UPDATES, INTERNAL);
-//  }
-
+void SCKBase::sleep() {
+  digitalWrite(RED, HIGH);
+  digitalWrite(GREEN, HIGH);
+  digitalWrite(BLUE, HIGH); 
+  driver__.ESPoff();
+  driver__.ADCoff();
 }
+
+
+
 
