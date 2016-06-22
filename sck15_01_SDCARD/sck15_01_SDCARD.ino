@@ -5,12 +5,16 @@
 
 #include "Constants.h"
 #include "SCKDrivers.h"
+#include "SCKUrban.h"
+#include "SCKBase.h"
 
 SCKDriver driver;
+SCKUrban urban;
+SCKBase base;
 
 #define USBEnabled      true 
 #define sensorEnabled   true
-#define debuggEnabled   true
+#define debuggEnabled   false
 
 uint32_t timetransmit = 0;  
 uint32_t TimeUpdate   = 0;  //Variable temporal de tiempo entre actualizacion y actualizacion de los sensensores
@@ -21,9 +25,9 @@ File myFile;
 float SENSORvalue[20];
 
 void setup() {
-  sckBegin();
-  sckAccelDefault();
-  sckConfig();
+  base.begin();
+  urban.begin();
+  base.config();
   driver.ESPoff();
   #if debuggEnabled
     SerialUSB.print(F("Initializing SD card..."));
@@ -59,8 +63,8 @@ void setup() {
 
 void loop() {  
 #if sensorEnabled  
-//  if ((millis()-timetransmit) >= (unsigned long)TimeUpdate*1000)
-//  {  
+  if ((millis()-timetransmit) >= (unsigned long)TimeUpdate*1000)
+  {  
     SerialUSB.println("*** loop ***");
     timetransmit = millis();
     updateSensorsSD();
@@ -68,8 +72,7 @@ void loop() {
     #if USBEnabled
         txDebugSD();
     #endif
-    delay(2000);
-//  }
+  }
 #endif  
 //    SerialUSB.print((driver.readADC(0))*3300/4095.);
 //    SerialUSB.print(" ");
