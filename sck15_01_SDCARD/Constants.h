@@ -23,9 +23,9 @@ ARDUINO ports definitions - GPIOS and ADCs
 #define CS_MMC  2
 #define CH_PD   1
 #define GPIO16  5
-#define RED     6
-#define GREEN   12
-#define BLUE    10
+#define REDpin     6
+#define GREENpin   12
+#define BLUEpin    10
 
 #define CONTROL 7     // PIN CONTROL 
 

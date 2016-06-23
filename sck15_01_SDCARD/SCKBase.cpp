@@ -33,6 +33,7 @@ void SCKBase::begin() {
   driver__.RTCini();
   driver__.RTCadjust(driver__.sckDate(__DATE__,__TIME__));
   driver__.accelDefault();
+  driver__.RGBled(0,255,0); 
   attachInterrupt(CONTROL, blink, LOW);
   SCB->SCR |= 1<<2; // Enable deep-sleep mode
   
@@ -42,16 +43,11 @@ void SCKBase::begin() {
 }
 
 void SCKBase::awake() {
-  digitalWrite(RED, HIGH);
-  digitalWrite(GREEN, LOW);
-  digitalWrite(BLUE, HIGH); 
-  
+  driver__.RGBled(0,255,0); 
 }
 
 void SCKBase::sleep() {
-  digitalWrite(RED, HIGH);
-  digitalWrite(GREEN, HIGH);
-  digitalWrite(BLUE, HIGH); 
+  driver__.RGBled(0,0,0);
   driver__.ESPoff();
   driver__.ADCoff();
 }

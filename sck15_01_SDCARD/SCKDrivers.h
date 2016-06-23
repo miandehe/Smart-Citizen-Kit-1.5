@@ -28,16 +28,8 @@ public:
     
     /*Inputs an outputs control*/
     float average(int anaPin);
-    
-    /*EEPROM commands*/
-//    void writeEEPROM(uint16_t eeaddress, uint8_t data);                              //Write a byte into the EEPROM
-//    byte readEEPROM(uint16_t eeaddress);                                             //Read a byte from the EEPROM
-//    void writeData(uint32_t eeaddress, long data, uint8_t location);                 //Write a long into the EEPROM
-//    void writeData(uint32_t eeaddress, uint16_t pos, char* text, uint8_t location);  //Write a string into the EEPROM
-//    char* readData(uint16_t eeaddress, uint16_t pos, uint8_t location);              //Read a string from the EEPROM
-//    uint32_t readData(uint16_t eeaddress, uint8_t location);                         //Read a long from the EEPROM
-    boolean compareDate(char* text, char* text1);
-    
+    void RGBled(uint8_t REDcolor, uint8_t GREENcolor, uint8_t BLUEcolor);
+       
     /*ESP8266 commands*/
     void ESPini();
     void ESPflash();
@@ -48,6 +40,7 @@ public:
     float readCurrent();
     boolean StatusCharge();
     float readCurrentCharge();
+    
     /*Sensor temperature*/
     uint16_t readSHT(uint8_t type);
     void getSHT(float* __Temperature, float* __Humidity);
@@ -62,6 +55,8 @@ public:
     void ADCoff();
     
     /*Gas sensor*/ 
+    void MICSini();
+    void MICSoff();
     void writeVH(byte device, long voltage );
     float readVH(byte device);
     void currentHeat(byte device, int current);
@@ -82,27 +77,21 @@ public:
     uint16_t readProx();
   
     /*Audio sensor*/ 
+    void NOISEini();
     void writeGAIN(float GAIN1, float GAIN2);
     float readGAIN();  
-    float getNoise();
+    float getNOISE();
 
 
-    
-
+   
     uint16_t getBattery();
     uint16_t getCharger();
     
-    
+    //Accelerometer and magnetometer sensors
     void accelDefault(void);
     void readAccMag(byte reg, float* __x, float* __y, float* __z);
     void readAcc(float* __x, float* __y, float* __z);
     void readMag(float* __x, float* __y, float* __z);
-
-
-
-
-
-
 
 
 private:

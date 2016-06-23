@@ -35,15 +35,9 @@ void SCKDriver::begin() {
   pinMode(P_WIFI, OUTPUT);
   pinMode(RST_ESP, OUTPUT);
   pinMode(GPIO0, OUTPUT);
-  pinMode(RED, OUTPUT);
-  pinMode(GREEN, OUTPUT);
-  pinMode(BLUE, OUTPUT);
   pinMode(CONTROL, INPUT);
   digitalWrite(IO0, HIGH); 
   digitalWrite(IO1, HIGH); 
-  digitalWrite(RED, HIGH);
-  digitalWrite(GREEN, LOW);
-  digitalWrite(BLUE, HIGH);  
 }
 
 /*Sensor temperature*/
@@ -210,103 +204,13 @@ float SCKDriver::average(int anaPin) {
   return(average);
 }
 
-
-/*EEPROM commands*/
-
-//void SCKDriver::writeEEPROM(uint16_t eeaddress, uint8_t data) {
-//  uint8_t retry = 0;
-//  while ((readEEPROM(eeaddress)!=data)&&(retry<10))
-//  {  
-//    Wire.beginTransmission(E2PROM);
-//    Wire.write((byte)(eeaddress >> 8));   // MSB
-//    Wire.write((byte)(eeaddress & 0xFF)); // LSB
-//    Wire.write(data);
-//    Wire.endTransmission();
-//    delay(6);
-//    retry++;
-//  }
-//}
-//
-//byte SCKDriver::readEEPROM(uint16_t eeaddress) {
-//  byte rdata = 0xFF;
-//  Wire.beginTransmission(E2PROM);
-//  Wire.write((byte)(eeaddress >> 8));   // MSB
-//  Wire.write((byte)(eeaddress & 0xFF)); // LSB
-//  Wire.endTransmission();
-//  Wire.requestFrom(E2PROM,1);
-//  while (!Wire.available()); 
-//  rdata = Wire.read();
-//  return rdata;
-//}
-//
-//void SCKDriver::writeData(uint32_t eeaddress, long data, uint8_t location)
-//{
-//    for (int i =0; i<4; i++) 
-//      {
-//        if (location == EXTERNAL) writeEEPROM(eeaddress + (3 -i) , data>>(i*8));
-//        else EEPROM.write(eeaddress + (3 -i), data>>(i*8));
-//      }
-//
-//}
-//
-//void SCKDriver::writeData(uint32_t eeaddress, uint16_t pos, char* text, uint8_t location)
-//{
-//  uint16_t eeaddressfree = eeaddress + buffer_length * pos;
-//  if (location == EXTERNAL)
-//    {
-//      for (uint16_t i = eeaddressfree; i< (eeaddressfree + buffer_length); i++) writeEEPROM(i, 0x00);
-//      for (uint16_t i = eeaddressfree; text[i - eeaddressfree]!= 0x00; i++) writeEEPROM(i, text[i - eeaddressfree]);
-//    }
-//  else
-//    {
-//      
-//      for (uint16_t i = eeaddressfree; i< (eeaddressfree + buffer_length); i++) EEPROM.write(i, 0x00);
-//      for (uint16_t i = eeaddressfree; text[i - eeaddressfree]!= 0x00; i++) 
-//        {
-//          //if (eeaddressfree>=DEFAULT_ADDR_SSID) if (text[i - eeaddressfree]==' ') text[i - eeaddressfree]='$';
-//          if (text[i - eeaddressfree]==' ') text[i - eeaddressfree]='$';
-//          EEPROM.write(i, text[i - eeaddressfree]); 
-//        }
-//    }
-//}
-//
-//uint32_t SCKDriver::readData(uint16_t eeaddress, uint8_t location)
-//{
-//  uint32_t data = 0;
-//  for (int i =0; i<4; i++)
-//    {
-//      if (location == EXTERNAL)  data = data + (uint32_t)((uint32_t)readEEPROM(eeaddress + i)<<((3-i)*8));
-//      else data = data + (uint32_t)((uint32_t)EEPROM.read(eeaddress + i)<<((3-i)*8));
-//    }
-//  return data;
-//}
-//
-//char* SCKDriver::readData(uint16_t eeaddress, uint16_t pos, uint8_t location)
-//{
-//  eeaddress = eeaddress + buffer_length * pos;
-//  uint16_t i;
-//  if (location == EXTERNAL)
-//    {
-//      uint8_t temp = readEEPROM(eeaddress);
-//      for ( i = eeaddress; ((temp!= 0x00)&&(temp<0x7E)&&(temp>0x1F)&&((i - eeaddress)<buffer_length)); i++) 
-//      {
-//        buffer[i - eeaddress] = readEEPROM(i);
-//        temp = readEEPROM(i + 1);
-//      }
-//    }
-//  else
-//    {
-//      uint8_t temp = EEPROM.read(eeaddress);
-//      for ( i = eeaddress; ((temp!= 0x00)&&(temp<0x7E)&&(temp>0x1F)&&((i - eeaddress)<buffer_length)); i++) 
-//      {
-//        buffer[i - eeaddress] = EEPROM.read(i);
-//        temp = EEPROM.read(i + 1);
-//      }
-//    }
-//  buffer[i - eeaddress] = 0x00; 
-//  return buffer;
-//}
-
+void SCKDriver::RGBled(uint8_t REDcolor, uint8_t GREENcolor, uint8_t BLUEcolor)
+  {
+    analogWrite(REDpin, 255-REDcolor);
+    analogWrite(GREENpin, 255-GREENcolor);
+    analogWrite(BLUEpin, 255-BLUEcolor);
+  }
+    
 /*ESP8266 commands*/
 
 void SCKDriver::ESPini()
@@ -408,18 +312,20 @@ float SCKDriver::readResistor(byte resistor ) {
  uint16_t SCKDriver::readADC(byte channel)
   {
     byte dir[4] = {2,4,6,8};
-    byte temp = readI2C(ADC_DIR,0)|B11000010;
+    //byte temp = readI2C(ADC_DIR,0)|B10000011;
+    byte temp = B11000000 + channel;
     writeI2C(ADC_DIR, 0, temp);
-    
-    delay(100);
+//    delay(100);
+    writeI2C(ADC_DIR, 0, temp);
     uint16_t data = (readI2C(ADC_DIR, dir[channel])<<4) + (readI2C(ADC_DIR, dir[channel] + 1)>>4);
-    delay(100);
+//    delay(100);
     return data;
   }
 
 void SCKDriver::ADCini()
   {
-    byte temp = readI2C(ADC_DIR,0)&B00000011;
+    byte temp = readI2C(ADC_DIR,0)&B00000000;
+    //temp = temp|B11000000;
     writeI2C(ADC_DIR, 0, temp);
   }
 
@@ -514,13 +420,31 @@ void SCKDriver::ADCoff()
   
   void SCKDriver::getMICS(float* __RsCO, float* __RsNO2){          
        
-        /*Correccion de la tension del Heather*/
+        /*Correccion de la corriente del Heather*/
         currentHeat(CO_SENSOR, 32); //Corriente en mA
         currentHeat(NO2_SENSOR, 26); //Corriente en mA
         
         *__RsCO = readMICS(CO_SENSOR);
         *__RsNO2 = readMICS(NO2_SENSOR);
          
+  }
+
+   void SCKDriver::MICSini(){          
+        currentHeat(CO_SENSOR, 32); //Corriente en mA
+        currentHeat(NO2_SENSOR, 26); //Corriente en mA  
+        digitalWrite(IO0, HIGH); //VH_CO SENSOR
+        digitalWrite(IO1, HIGH); //VH_NO2 SENSOR 
+        writeResistor(CO_SENSOR + 2, 100000); //Inicializacion de la carga del CO SENSOR
+        writeResistor(NO2_SENSOR + 2, 100000); //Inicializacion de la carga del NO2 SENSOR
+  }
+
+  void SCKDriver::MICSoff(){          
+        currentHeat(CO_SENSOR, 32); //Corriente en mA
+        currentHeat(NO2_SENSOR, 26); //Corriente en mA  
+        digitalWrite(IO0, LOW); //VH_CO SENSOR
+        digitalWrite(IO1, LOW); //VH_NO2 SENSOR 
+        writeResistor(CO_SENSOR + 2, 100000); //Inicializacion de la carga del CO SENSOR
+        writeResistor(NO2_SENSOR + 2, 100000); //Inicializacion de la carga del NO2 SENSOR
   }
 
 /*Light sensor*/ 
@@ -574,6 +498,12 @@ void SCKDriver::ADCoff()
   }
 
 /*Audio sensor*/ 
+  void SCKDriver::NOISEini() {  
+    float GAIN1 = 0;
+    float GAIN2 = 400;
+    writeGAIN(GAIN1,GAIN2);  
+  }
+  
   void SCKDriver::writeGAIN(float GAIN1, float GAIN2)
   {
     writeResistor(6, GAIN1);
@@ -586,9 +516,9 @@ void SCKDriver::ADCoff()
     return ((22000/(readResistor(6)+2440)+1)*(62000/readResistor(7)+1));
   }    
  
-  float SCKDriver::getNoise() {  
-    #define GAIN1 0
-    #define GAIN2 400
+  float SCKDriver::getNOISE() {  
+    float GAIN1 = 0;
+    float GAIN2 = 400;
     writeGAIN(GAIN1,GAIN2);  
     float mVRaw = (float)((average(S4))/1023.)*VCC;
     float dB = 0;
@@ -763,24 +693,6 @@ uint16_t SCKDriver::read16(uint8_t a) {
   ret |= (uint16_t)Wire.read() << 8; // receive DATA
 
   return ret;
-}
-
-
-
-
-
-
-boolean SCKDriver::compareDate(char* text, char* text1)
-{
-  if ((strlen(text))!=(strlen(text1))) return false;
-  else 
-  {
-    for(int i=0; i<strlen(text); i++)
-    {
-      if (text[i]!=text1[i]) return false;
-    }
-  }
-  return true;
 }
 
 uint16_t SCKDriver::getBattery() {

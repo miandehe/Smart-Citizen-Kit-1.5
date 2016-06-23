@@ -52,7 +52,6 @@ void setup() {
       #endif 
     }
     timetransmit = millis();
-//    driver.writeADC(0, B11001100);
 }
 
 void loop() {  
@@ -69,17 +68,4 @@ void loop() {
   }
 #endif  
   urban.management();
-  
-//    SerialUSB.print((driver.readADC(0))*3300/4095.);
-//    SerialUSB.print(" ");
-//    SerialUSB.print(driver.readCurrent()/1000*(driver.readADC(1))*3300/4095.);
-//    SerialUSB.print("mA ");
-//    SerialUSB.print(2*(driver.readADC(2))*3300/4095.);
-//    SerialUSB.print(" ");
-//    SerialUSB.print(2*(driver.readADC(3))*3300/4095.);
-//    SerialUSB.print(" ");
-//    SerialUSB.print(driver.readCurrent());
-//    SerialUSB.print(" ");
-//    SerialUSB.println(driver.readResistor(0)+3300);
-//    delay(100); 
 }

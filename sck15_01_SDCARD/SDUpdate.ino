@@ -3,7 +3,7 @@ void txSD() {
   // if the file opened okay, write to it:
   myFile = SD.open("post.csv", FILE_WRITE);
   if (myFile) {
-  digitalWrite(RED, LOW);
+  driver.RGBled(255,0,0);
   #if debuggEnabled
       SerialUSB.println(F("Writing...")); 
   #endif 
@@ -21,7 +21,7 @@ void txSD() {
   #if debuggEnabled
       SerialUSB.println(F("Closing...")); 
   #endif 
-  digitalWrite(RED, HIGH);
+  driver.RGBled(0,255,0);
   }
 }
 
@@ -81,7 +81,7 @@ void updateSensorsSD() {
     SENSORvalue[5] = driver.getCharger();  // mV
     SENSORvalue[6] = driver.readCurrentCharge(); //mA
     driver.getMICS(&SENSORvalue[7], &SENSORvalue[8]);
-    SENSORvalue[9] = driver.getNoise(); //dB  
+    SENSORvalue[9] = driver.getNOISE(); //dB  
     driver.readAcc(&SENSORvalue[10], &SENSORvalue[11], &SENSORvalue[12]);
     driver.readMag(&SENSORvalue[13], &SENSORvalue[14], &SENSORvalue[15]);
 }
