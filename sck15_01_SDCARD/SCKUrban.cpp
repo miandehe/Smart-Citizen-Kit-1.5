@@ -16,13 +16,17 @@ void SCKUrban::begin()
 
 void SCKUrban::sleep()
   {
+    
     driver_.MICSoff();
     base.sleep();
+    USBDevice.detach();
+    base.standby();
   }
 
 void SCKUrban::awake()
   {
     base.awake();
+    USBDevice.attach();
     driver_.MICSini();
     driver_.beginUV();
   }
