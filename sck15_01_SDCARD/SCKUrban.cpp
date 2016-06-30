@@ -37,6 +37,7 @@ void SCKUrban::management()
           {
             sleep();
             state = false;
+            digitalWrite(PS, LOW);
             __WFI();
           }
       }
@@ -44,6 +45,7 @@ void SCKUrban::management()
       {
         if (!state)
           {
+            digitalWrite(PS, HIGH);
             awake();
             state = true;
 

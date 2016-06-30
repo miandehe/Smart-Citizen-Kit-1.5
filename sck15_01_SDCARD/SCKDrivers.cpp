@@ -33,11 +33,12 @@ void SCKDriver::begin() {
   pinMode(SCK, OUTPUT);
   pinMode(CH_PD, OUTPUT);
   pinMode(P_WIFI, OUTPUT);
-  pinMode(RST_ESP, OUTPUT);
+  pinMode(PS, OUTPUT);
   pinMode(GPIO0, OUTPUT);
   pinMode(CONTROL, INPUT);
   digitalWrite(IO0, HIGH); 
   digitalWrite(IO1, HIGH); 
+  digitalWrite(PS, HIGH);
 }
 
 /*Sensor temperature*/
@@ -217,7 +218,7 @@ void SCKDriver::ESPini()
   {
      digitalWrite(CH_PD, HIGH);
      digitalWrite(P_WIFI, LOW);
-     digitalWrite(RST_ESP, HIGH);
+    // digitalWrite(RST_ESP, HIGH);
      digitalWrite(GPIO0, HIGH);
   }
 
@@ -225,7 +226,7 @@ void SCKDriver::ESPflash()
   {
      digitalWrite(CH_PD, HIGH);
      digitalWrite(P_WIFI, LOW);
-     digitalWrite(RST_ESP, HIGH);
+    // digitalWrite(RST_ESP, HIGH);
      digitalWrite(GPIO0, LOW);
   }
   
@@ -233,7 +234,7 @@ void SCKDriver::ESPoff()
   {
      digitalWrite(CH_PD, LOW);
      digitalWrite(P_WIFI, HIGH);
-     digitalWrite(RST_ESP, LOW);
+    // digitalWrite(RST_ESP, LOW);
      digitalWrite(GPIO0, LOW);
   }
 

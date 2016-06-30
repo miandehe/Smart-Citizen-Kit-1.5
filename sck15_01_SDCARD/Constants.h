@@ -18,7 +18,7 @@ ARDUINO ports definitions - GPIOS and ADCs
 
 #define P_WIFI  0
 #define GPIO0   11
-#define RST_ESP 43
+#define PS      38
 #define CS_ESP  13
 #define CS_MMC  2
 #define CH_PD   1
