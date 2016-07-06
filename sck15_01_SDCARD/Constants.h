@@ -42,6 +42,7 @@ ARDUINO ports definitions - GPIOS and ADCs
 #define DEFAULT_MIN_UPDATES  "1"      //Minimo numero de actualizaciones antes de postear
 
 #define POST_MAX             20       //Maximo numero de posteos a la vez
+#define RESOLUTION_ANALOG    4095.     //Resolucion de las entradas analogicas
 
 /* 
 i2c ADDRESSES 

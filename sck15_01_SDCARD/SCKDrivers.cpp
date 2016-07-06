@@ -218,7 +218,6 @@ void SCKDriver::ESPini()
   {
      digitalWrite(CH_PD, HIGH);
      digitalWrite(P_WIFI, LOW);
-    // digitalWrite(RST_ESP, HIGH);
      digitalWrite(GPIO0, HIGH);
   }
 
@@ -226,7 +225,6 @@ void SCKDriver::ESPflash()
   {
      digitalWrite(CH_PD, HIGH);
      digitalWrite(P_WIFI, LOW);
-    // digitalWrite(RST_ESP, HIGH);
      digitalWrite(GPIO0, LOW);
   }
   
@@ -234,7 +232,6 @@ void SCKDriver::ESPoff()
   {
      digitalWrite(CH_PD, LOW);
      digitalWrite(P_WIFI, HIGH);
-    // digitalWrite(RST_ESP, LOW);
      digitalWrite(GPIO0, LOW);
   }
 
@@ -260,7 +257,7 @@ boolean SCKDriver::StatusCharge()
   
 float SCKDriver::readCurrentCharge()
   {
-    return (readCurrent()/1000*(readADC(1))*VCC/4095.);
+    return (readCurrent()/1000*(readADC(1))*VCC/RESOLUTION_ANALOG);
   }
      
 /*Potenciometer*/ 
@@ -357,7 +354,7 @@ void SCKDriver::ADCoff()
     byte Sensor = S2;
     if (device == NO2_SENSOR) { Rc=Rc1; Sensor = S3;}
 
-    float Vc = (float)average(Sensor)*VCC/1023; //mV 
+    float Vc = (float)average(Sensor)*VCC/RESOLUTION_ANALOG; //mV 
     float current_measure = Vc/Rc; //mA 
     float Rh = (readVH(device)- Vc)/current_measure;
     float Vh = (Rh + Rc)*current;
@@ -372,7 +369,7 @@ void SCKDriver::ADCoff()
         else  SerialUSB.print("CO SENSOR correccion VH: ");
         SerialUSB.print(readVH(device));
         SerialUSB.println(" mV");
-        Vc = (float)average(Sensor)*VCC/1023; //mV 
+        Vc = (float)average(Sensor)*VCC/RESOLUTION_ANALOG; //mV 
         current_measure = Vc/Rc; //mA 
         if (device == NO2_SENSOR) SerialUSB.print("NO2 SENSOR corrected current: ");
         else SerialUSB.print("CO SENSOR corrected current: ");
@@ -388,7 +385,7 @@ void SCKDriver::ADCoff()
      byte Sensor = S0;
      if (device == NO2_SENSOR) {Sensor = S1; }
      float RL = readResistor(device + 2); //Ohm
-     float VL = ((float)average(Sensor)*VCC)/1023; //mV
+     float VL = ((float)average(Sensor)*VCC)/RESOLUTION_ANALOG; //mV
      if (VL > VCC) VL = VCC;
      float Rs = ((VCC-VL)/VL)*RL; //Ohm
      #if debuggSCK
@@ -521,7 +518,7 @@ void SCKDriver::ADCoff()
     float GAIN1 = 0;
     float GAIN2 = 400;
     writeGAIN(GAIN1,GAIN2);  
-    float mVRaw = (float)((average(S4))/1023.)*VCC;
+    float mVRaw = (float)((average(S4))/RESOLUTION_ANALOG)*VCC;
     float dB = 0;
     
     #if debuggSCK
@@ -697,7 +694,7 @@ uint16_t SCKDriver::read16(uint8_t a) {
 }
 
 uint16_t SCKDriver::getBattery() {
-  uint16_t temp = 2*(readADC(3))*VCC/4095.;
+  uint16_t temp = 2*(readADC(3))*VCC/RESOLUTION_ANALOG;
   #if !DataRaw 
     temp = map(temp, VAL_MIN_BATTERY, VAL_MAX_BATTERY, 0, 100);
     if (temp>100) temp=100;
@@ -715,7 +712,7 @@ uint16_t SCKDriver::getBattery() {
 }
 
 uint16_t SCKDriver::getCharger() {
-  uint16_t temp = 2*(readADC(2))*VCC/4095.;
+  uint16_t temp = 2*(readADC(2))*VCC/RESOLUTION_ANALOG;
 #if debuggSCK
   SerialUSB.print("Charger voltage: ");
   SerialUSB.print(temp);
