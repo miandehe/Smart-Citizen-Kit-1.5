@@ -39,6 +39,7 @@ void SCKDriver::begin() {
   digitalWrite(IO0, HIGH); 
   digitalWrite(IO1, HIGH); 
   digitalWrite(PS, HIGH);
+  analogReadResolution(12);
 }
 
 /*Sensor temperature*/
