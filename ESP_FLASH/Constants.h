@@ -16,18 +16,18 @@ ARDUINO ports definitions - GPIOS and ADCs
 #define IO2 3         
 #define IO3 2        
 
-#define P_WIFI  0
+#define P_WIFI  35
 #define GPIO0   11
-#define RST_ESP 43
+#define PS      38
 #define CS_ESP  13
 #define CS_MMC  4
-#define CH_PD   1
-#define GPIO16  5
-#define RED     6
-#define GREEN   12
-#define BLUE    10
+#define CH_PD   36
+#define INT_POWER  5
+#define REDpin     6
+#define GREENpin   12
+#define BLUEpin    10
 
-#define CONTROL 7     // PIN CONTROL S2
+#define CONTROL 7     // PIN CONTROL 
 
 #define S0 A3         //CO_SENSOR
 #define S1 A4         //NO2_SENSOR
@@ -42,12 +42,13 @@ ARDUINO ports definitions - GPIOS and ADCs
 #define DEFAULT_MIN_UPDATES  "1"      //Minimo numero de actualizaciones antes de postear
 
 #define POST_MAX             20       //Maximo numero de posteos a la vez
+#define RESOLUTION_ANALOG    4095.     //Resolucion de las entradas analogicas
 
 /* 
 i2c ADDRESSES 
 */
 
-#define ACCEL                0x1D    // Direction of the LSM303D
+#define ACCMAG                0x1D    // Direction of the LSM303D
 
 
 #define POT1                 0x50    
@@ -81,6 +82,3 @@ i2c ADDRESSES
 
 #define  VAL_MAX_BATTERY                             4208
 #define  VAL_MIN_BATTERY                             3000
-
-
-

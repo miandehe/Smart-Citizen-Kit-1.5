@@ -23,7 +23,7 @@ void SCKDriver::begin() {
   Wire.begin();
   //TWBR = ((F_CPU / TWI_FREQ) - 16) / 2;  
   SerialUSB.begin(115200);
-  Serial.begin(115200);
+  Serial1.begin(115200);
   pinMode(IO0, OUTPUT); //VH_CO SENSOR
   pinMode(IO1, OUTPUT); //VH_NO2 SENSOR
   pinMode(IO2, OUTPUT); //NO2 SENSOR_HIGH_IMPEDANCE
@@ -31,18 +31,16 @@ void SCKDriver::begin() {
   pinMode(SCK, OUTPUT);
   pinMode(CH_PD, OUTPUT);
   pinMode(P_WIFI, OUTPUT);
-  pinMode(RST_ESP, OUTPUT);
   pinMode(GPIO0, OUTPUT);
-  pinMode(RED, OUTPUT);
-  pinMode(GREEN, OUTPUT);
-  pinMode(BLUE, OUTPUT);
+  pinMode(REDpin, OUTPUT);
+  pinMode(GREENpin, OUTPUT);
+  pinMode(BLUEpin, OUTPUT);
   pinMode(CONTROL, INPUT);
   digitalWrite(IO0, HIGH); 
   digitalWrite(IO1, HIGH); 
-  digitalWrite(RED, HIGH);
-  digitalWrite(GREEN, HIGH);
-  digitalWrite(BLUE, LOW);
-  //writeI2C(CHARGER, 0x04, B10110010); //CHARGE VOLTAGE LIMIT 4208 mV
+  digitalWrite(REDpin, HIGH);
+  digitalWrite(GREENpin, HIGH);
+  digitalWrite(BLUEpin, LOW);
 }
 
 /*Sensor temperature*/
@@ -330,7 +328,6 @@ void SCKDriver::ESPini()
   {
      digitalWrite(CH_PD, HIGH);
      digitalWrite(P_WIFI, LOW);
-     digitalWrite(RST_ESP, HIGH);
      digitalWrite(GPIO0, HIGH);
   }
 
@@ -338,7 +335,6 @@ void SCKDriver::ESPflash()
   {
      digitalWrite(CH_PD, HIGH);
      digitalWrite(P_WIFI, LOW);
-     digitalWrite(RST_ESP, HIGH);
      digitalWrite(GPIO0, LOW);
   }
   
@@ -346,7 +342,6 @@ void SCKDriver::ESPoff()
   {
      digitalWrite(CH_PD, LOW);
      digitalWrite(P_WIFI, HIGH);
-     digitalWrite(RST_ESP, LOW);
      digitalWrite(GPIO0, LOW);
   }
 

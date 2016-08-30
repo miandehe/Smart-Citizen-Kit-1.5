@@ -14,15 +14,15 @@ ARDUINO ports definitions - GPIOS and ADCs
 #define IO0 9         // CO SENSOR_HEATHER
 #define IO1 8        // NO2 SENSOR_HEATHER
 #define IO2 3         
-#define IO3 4        
+#define IO3 2        
 
-#define P_WIFI  0
+#define P_WIFI  35
 #define GPIO0   11
 #define PS      38
 #define CS_ESP  13
-#define CS_MMC  2
-#define CH_PD   1
-#define GPIO16  5
+#define CS_MMC  4
+#define CH_PD   36
+#define INT_POWER  5
 #define REDpin     6
 #define GREENpin   12
 #define BLUEpin    10

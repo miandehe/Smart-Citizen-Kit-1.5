@@ -21,15 +21,13 @@ uint32_t SENSORvalue[20];
 void setup() {
   delay(5000);
   sckBegin();
-  sckAccelDefault();
-  sckConfig();
   driver.ESPflash();
   //driver.ESPini();
 }
 
 void loop() {  
-  if (Serial.available())
-      SerialUSB.write(Serial.read());
+  if (Serial1.available())
+      SerialUSB.write(Serial1.read());
   if (SerialUSB.available())
-    Serial.write(SerialUSB.read());
+    Serial1.write(SerialUSB.read());
 }
