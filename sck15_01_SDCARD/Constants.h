@@ -16,12 +16,12 @@ ARDUINO ports definitions - GPIOS and ADCs
 #define IO2 3         
 #define IO3 2        
 
-#define P_WIFI  35
+#define P_WIFI  30
 #define GPIO0   11
 #define PS      38
 #define CS_ESP  13
 #define CS_MMC  4
-#define CH_PD   36
+#define CH_PD   31
 #define INT_POWER  5
 #define REDpin     6
 #define GREENpin   12

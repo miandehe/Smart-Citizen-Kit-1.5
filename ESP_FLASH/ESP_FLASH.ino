@@ -22,7 +22,7 @@ void setup() {
   delay(5000);
   sckBegin();
   driver.ESPflash();
-  //driver.ESPini();
+//  driver.ESPini();
 }
 
 void loop() {  
