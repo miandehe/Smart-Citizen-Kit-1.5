@@ -21,14 +21,11 @@
 
 void SCKDriver::begin() {
   Wire.begin();
-  //TWBR = ((F_CPU / TWI_FREQ) - 16) / 2;  
   SerialUSB.begin(115200);
   Serial1.begin(115200);
   pinMode(IO0, OUTPUT); //VH_CO SENSOR
   pinMode(IO1, OUTPUT); //VH_NO2 SENSOR
   pinMode(IO2, OUTPUT); //NO2 SENSOR_HIGH_IMPEDANCE
-  pinMode(MOSI, OUTPUT);
-  pinMode(SCK, OUTPUT);
   pinMode(CH_PD, OUTPUT);
   pinMode(P_WIFI, OUTPUT);
   pinMode(GPIO0, OUTPUT);
@@ -40,7 +37,7 @@ void SCKDriver::begin() {
   digitalWrite(IO1, HIGH); 
   digitalWrite(REDpin, HIGH);
   digitalWrite(GREENpin, HIGH);
-  digitalWrite(BLUEpin, LOW);
+  digitalWrite(BLUEpin, HIGH);
 }
 
 /*Sensor temperature*/
@@ -334,14 +331,15 @@ void SCKDriver::ESPini()
 void SCKDriver::ESPflash()
   {
      digitalWrite(CH_PD, HIGH);
-     digitalWrite(P_WIFI, LOW);
      digitalWrite(GPIO0, LOW);
+//     delay(1000);
+     digitalWrite(P_WIFI, LOW);
   }
   
 void SCKDriver::ESPoff()
   {
-     digitalWrite(CH_PD, LOW);
      digitalWrite(P_WIFI, HIGH);
+     digitalWrite(CH_PD, LOW);
      digitalWrite(GPIO0, LOW);
   }
 
