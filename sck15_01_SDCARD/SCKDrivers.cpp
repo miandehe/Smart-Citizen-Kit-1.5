@@ -258,7 +258,7 @@ boolean SCKDriver::StatusCharge()
   
 float SCKDriver::readCurrentCharge()
   {
-    return (readCurrent()/1000*(readADC(1))*VCC/RESOLUTION_ANALOG);
+    return ((readCurrent()/1000.)*(readADC(1))*VCC/RESOLUTION_ANALOG);
   }
      
 /*Potenciometer*/ 

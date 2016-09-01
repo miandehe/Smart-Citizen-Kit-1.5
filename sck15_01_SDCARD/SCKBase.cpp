@@ -45,6 +45,7 @@ void SCKBase::begin() {
 }
 
 void SCKBase::awake() {
+  digitalWrite(PS, HIGH);
   driver__.RGBled(0,255,0); 
 }
 
@@ -52,6 +53,7 @@ void SCKBase::sleep() {
   driver__.RGBled(0,0,0);
   driver__.ESPoff();
   driver__.ADCoff();
+  digitalWrite(PS, LOW);
 }
 
 /*******************************************************************************
