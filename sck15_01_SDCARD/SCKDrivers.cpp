@@ -25,7 +25,7 @@ RTCZero rtc;
 void SCKDriver::begin() {
   Wire.begin(); 
   SerialUSB.begin(115200);
-  Serial1.begin(115200);
+  Serial1.begin(57600);
   pinMode(IO0, OUTPUT); //VH_CO SENSOR
   pinMode(IO1, OUTPUT); //VH_NO2 SENSOR
   pinMode(IO2, OUTPUT); //NO2 SENSOR_HIGH_IMPEDANCE

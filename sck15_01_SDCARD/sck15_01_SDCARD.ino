@@ -13,7 +13,7 @@ SCKUrban urban;
 
 #define USBEnabled      true 
 #define sensorEnabled   true
-#define debuggEnabled   false
+#define debuggEnabled   true
 
 uint32_t timetransmit = 0;  
 uint32_t TimeUpdate   = 10;  //Variable temporal de tiempo entre actualizacion y actualizacion de los sensensores
@@ -25,7 +25,7 @@ float SENSORvalue[20];
 
 void setup() {
   urban.begin();
-  driver.ESPoff();
+  driver.ESPini();
   #if debuggEnabled
     SerialUSB.print(F("Initializing SD card..."));
   #endif 

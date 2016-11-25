@@ -23,6 +23,12 @@ void txSD() {
   #endif 
   driver.RGBled(0,255,0);
   }
+  else 
+  {
+  #if debuggEnabled
+      SerialUSB.println(F("initialization failed!"));
+  #endif 
+  }
 }
 
 char* SENSOR[20]={
